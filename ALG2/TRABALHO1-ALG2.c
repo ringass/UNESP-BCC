@@ -28,8 +28,8 @@ int SetColor(char color)
   return SetConsoleTextAttribute(h, color);
 }
 
-const char BancoUser[] = "admin10";
-const char SenhaUser[] = "12345";
+const char BancoUser[] = "1";
+const char SenhaUser[] = "1";
 const char unidades[][12] = {"UM ", "DOIS ", "TRES ", "QUATRO ", "CINCO ", "SEIS ", "SETE ", "OITO ", "NOVE "};
 const char especiais[][12] = {"DEZ ", "ONZE ", "DOZE ", "TREZE ", "QUATORZE ", "QUINZE ", "DEZESSEIS ", "DEZESSETE ", "DEZOITO ", "DEZENOVE "};
 const char dezenas[][12] = {"VINTE ", "TRINTA ", "QUARENTA ", "CINQUENTA ", "SESSENTA ", "SETENTA ", "OITENTA ", "NOVENTA "};
@@ -216,7 +216,6 @@ void EscreverPorExtenso(char num[5][4])
       }
     }
 
-
     switch (partes)
     {
     case 5:
@@ -249,12 +248,14 @@ void EscreverPorExtenso(char num[5][4])
       else if (i == 0 && conv[i + 1] == 0)
       {
         printf(" DE ");
+      }if(i == partes - 2){
+        printf(" ");
       }
       break;
     case 3:
       if (i == 0)
       {
-        printf("%s", milhares[i + 2]);
+        printf("%s ", milhares[i + 2]);
       }
       break;
     }

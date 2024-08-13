@@ -5,7 +5,8 @@
 #include <locale.h>
 #include <Windows.h>
 #include <conio.h>
-#define upleft 
+
+#define upleft
 #define botleft
 #define upright '╮'
 #define botright
@@ -37,12 +38,12 @@ const char centenas[][14] = {"CEM ", "CENTO ", "DUZENTOS ", "TREZENTOS ", "QUATR
 const char milhares[][11] = {"BILHAO", "MILHAO", "MIL"};
 const char milEspecial[][11] = {"BILHOES", "MILHOES", "MIL"};
 
-
 void SepararString(char n[5][4], char z[]);
 int Validacao(char *input);
 void EscreverPorExtenso(char num[5][4]);
 int LoginLogic();
 void escreveTexto(int x, int y, char texto[], int cor);
+void desenhaQuadrado(int x1, int y1, int x2, int y2, int cor);
 void inicio(int op);
 int menuInicio();
 void ajuda();
@@ -56,29 +57,34 @@ int main()
   memset(p, '\0', sizeof(p));
   memset(num, '\0', sizeof(num));
 
-
   int continuar = 1;
   int b;
-  while(continuar){
+  while (continuar)
+  {
     b = menuInicio();
     SetColor(7);
-    if(b == 1){
+    if (b == 1)
+    {
       break;
-    }else if(b == 2){
-      
+    }
+    else if (b == 2)
+    {
+
       printf("Saindo...\n\n");
       exit(0);
-    }else if(b == 11 || b == 3){
+    }
+    else if (b == 11 || b == 3)
+    {
       ajuda();
     }
   }
 
- 
-  if(!LoginLogic()){
-    system("cls");
-    printf("ACESSO NEGADO NEGAOOOOOOOOOOOOO\n\n");
+  if (!LoginLogic())
+  {
     return 0;
-  }else{
+  }
+  else
+  {
     system("cls");
     printf("ACESSO CONCEDIDO NEGAOOOOOOOOO\n\n");
   }
@@ -87,7 +93,6 @@ int main()
   {
     printf("Digite o valor do seu cheque separando centenas por '.' e centavos por ','): R$ ");
     scanf("%s", p);
-
 
     if (!Validacao(p))
     {
@@ -117,7 +122,6 @@ void SepararString(char n[5][4], char z[])
     n[count - 1][2] = '\0';
   }
 }
-
 
 int Validacao(char *input)
 {
@@ -164,7 +168,6 @@ void EscreverPorExtenso(char num[5][4])
     int cents = conv[i] / 100;
     int dozens = (conv[i] % 100) / 10;
     int units = (conv[i] % 10);
-
 
     if (i == partes - 2 && (cents != 0 || dozens != 0 || units != 0) && i != 0)
     {
@@ -219,7 +222,7 @@ void EscreverPorExtenso(char num[5][4])
     switch (partes)
     {
     case 5:
-      if (i <= 2 && (conv[i] != 0 || conv[i+1] != 0))
+      if (i <= 2 && (conv[i] != 0 || conv[i + 1] != 0))
       {
         printf("%s", (units > 1 || dozens > 0 || cents > 0) ? milEspecial[i] : milhares[i]);
         if (conv[i + 1] != 0 && i < 2)
@@ -230,14 +233,14 @@ void EscreverPorExtenso(char num[5][4])
         {
           printf(" DE ");
         }
-        else if(i != partes - 1 && i != partes - 2)
+        else if (i != partes - 1 && i != partes - 2)
         {
           printf(" ");
         }
       }
       break;
     case 4:
-      if (i <= 1 && (conv[i] != 0 || conv[i+1] != 0))
+      if (i <= 1 && (conv[i] != 0 || conv[i + 1] != 0))
       {
         printf("%s", (units > 1 || dozens > 0 || cents > 1) ? milEspecial[i + 1] : milhares[i + 1]);
       }
@@ -248,7 +251,9 @@ void EscreverPorExtenso(char num[5][4])
       else if (i == 0 && conv[i + 1] == 0)
       {
         printf(" DE ");
-      }if(i == partes - 2){
+      }
+      if (i == partes - 2)
+      {
         printf(" ");
       }
       break;
@@ -260,9 +265,11 @@ void EscreverPorExtenso(char num[5][4])
       break;
     }
 
-    if(partes == 2 && i == 0 && units == 1){
+    if (partes == 2 && i == 0 && units == 1)
+    {
       printf("REAL E ");
-    }else if (i == partes - 2)
+    }
+    else if (i == partes - 2)
     {
       printf("REAIS E ");
     }
@@ -274,32 +281,63 @@ void EscreverPorExtenso(char num[5][4])
   }
 }
 
-
-int LoginLogic(){
+int LoginLogic()
+{
   char tryName[15], senha[8];
   int i = 0;
   int x = 3;
-  printf("DIGITE SEU USERNAME: ");
-  scanf("%s", tryName);
-  printf("DIGITE SUA SENHA: ");
-  scanf("%s", senha);
+  
+  while (1)
+  {
+    desenhaQuadrado(1, 60, 12, 102, 7);
+    escreveTexto(3, 75, "LOGIN PAGE", 7);
 
-  while(x != 0 && !(strcmp(tryName, BancoUser) == 0 && strcmp(senha, SenhaUser) == 0) ){
-    printf("%d tentativa, voce tem mais %d tentativas\n", i+1, x);
-    printf("DIGITE SEU USERNAME: ");
-    scanf("%s", tryName);
-    printf("DIGITE SUA SENHA: ");
-    scanf("%s", senha);
-  i++;
-  x--;
+    while (x != 0)
+    {
+      escreveTexto(5, 65, "DIGITE SEU USERNAME:            ", 7); 
+      gotoxy(86, 5);
+      scanf("%s", tryName);
+
+      escreveTexto(7, 65, "DIGITE SUA SENHA:               ", 7); 
+      gotoxy(83, 7);
+      scanf("%s", senha);
+
+      if (strcmp(tryName, BancoUser) == 0 && strcmp(senha, SenhaUser) == 0)
+      {
+        return 1;  
+      }
+      else
+      {
+        escreveTexto(9, 65, "LOGIN OU SENHA INCORRETOS!", 4);
+        i++;
+        x--;
+
+        if (x > 0)
+        {
+
+          char tentativaMsg[50];
+          sprintf(tentativaMsg, "Voce tem mais %d tentativa(s)", x);
+          escreveTexto(10, 65, tentativaMsg, 7);
+        }
+      }
+
+      escreveTexto(5, 86, "               ", 7);
+      escreveTexto(7, 83, "               ", 7);
+    }
+
+    if (x == 0)
+    {
+      system("cls");
+      desenhaQuadrado(1, 60, 12, 102, 7);
+      escreveTexto(6, 63, "LOGIN OU SENHA INCORRETOS!", 4);
+      escreveTexto(7, 63, "TODAS AS TENTATIVAS FORAM UTILIZADAS", 4);
+      SetColor(7);
+      gotoxy(13, 13);
+      return 0;  
+    }
+  }
 }
 
-if(x == 0){
-  return 0;
-}else{
-  return 1;
-}
-}
 
 void escreveTexto(int x, int y, char texto[], int cor)
 {
@@ -313,14 +351,14 @@ void inicio(int op)
   char vet[][30] = {"INICIAR", "SAIR (ESC)", "AJUDA (F1)"};
   int i;
   system("cls");
-
-  escreveTexto(3, 85, "BEM-VINDO AO TRABALHO DE CHEQUE", 7);
+  desenhaQuadrado(1, 60, 10, 102, 7);
+  escreveTexto(3, 65, "BEM-VINDO AO TRABALHO DE CHEQUE\n", 7);
 
   for (i = 0; i < 3; i++)
   {
-    escreveTexto(6 + i, 95, vet[i], 7);
+    escreveTexto(6 + i, 75, vet[i], 7);
   }
-  escreveTexto(6 + op - 1, 95, vet[op - 1], 2);
+  escreveTexto(6 + op - 1, 75, vet[op - 1], 2);
 }
 
 int menuInicio()
@@ -360,7 +398,8 @@ int menuInicio()
       return op;
     }
 
-    if(t == '\x1b'){
+    if (t == '\x1b')
+    {
       system("cls");
       return 2;
     }
@@ -369,28 +408,52 @@ int menuInicio()
 }
 
 void ajuda()
-{ 
-    system("cls");
-    printf("                                ::::: AJUDA :::::\n");
-    printf("O programa funciona transformando seu numero em seu valor por extenso na lingua portuguesa\n");
-    printf("\n1- Nao esqueca de separar as centenas de milhar e centenas por pontos\n");
-    printf("\n2- Nao esqueca de adicionar os centavos e os separar por virgulas ou pontos\n");
-    printf("\n3- Para iniciar o programa sera necessario realizar login\n");
-    printf("   -> A senha para entrar no programa eh ""12345"" e o username eh ""admin10"" \n");
-    printf("\nATENCAO:\n");
-    printf("                   ::::: PRESSIONE ESC PARA VOLTAR AO MENU :::::\n");
+{
+  system("cls");
+  printf("                             ::::: AJUDA :::::\n");
+  printf("O programa funciona transformando seu numero em seu valor por extenso na lingua portuguesa\n");
+  printf("\n1- Nao esqueca de separar as centenas de milhar e centenas por pontos\n");
+  printf("\n2- Nao esqueca de adicionar os centavos e os separar por virgulas ou pontos\n");
+  printf("\n3- Para iniciar o programa sera necessario realizar login\n");
+  printf("   -> A senha para entrar no programa eh "
+         "12345"
+         " e o username eh "
+         "admin10"
+         " \n");
+  printf("\nATENCAO:\n");
+  printf("                 ::::: PRESSIONE ESC PARA VOLTAR AO MENU :::::\n");
 
-    int t;
-    while (1) { 
-        t = _getch(); 
-        if (t == esc) { 
-            break; 
-        }
+  SetConsoleOutputCP(CP_UTF8);
+  printf("%s", "╠ ╡ ╢ ╣ ╤");
+
+  int t;
+  while (1)
+  {
+    t = _getch();
+    if (t == esc)
+    {
+      break;
     }
-    main();
+  }
+  main();
 }
 
+void desenhaQuadrado(int x1, int y1, int x2, int y2, int cor)
+{
+  char linha[100];
+  for (int i = 0; i < (y2 - y1 + 1); i++)
+  {
+    linha[i] = '*';
+  }
+  linha[y2 - y1 + 1] = '\0';
 
+  escreveTexto(x1, y1, linha, cor);
 
+  for (int i = x1 + 1; i < x2; i++)
+  {
+    escreveTexto(i, y1, "*", cor);
+    escreveTexto(i, y2, "*", cor);
+  }
 
-
+  escreveTexto(x2, y1, linha, cor);
+}

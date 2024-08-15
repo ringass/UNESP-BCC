@@ -75,6 +75,8 @@ void desenhaQuadrado(int x1, int y1, int x2, int y2, int cor);
 void inicio(int op);
 int menuInicio();
 void ajuda();
+int menuRepro();
+void Repro(int op);
 
 
 int main()
@@ -121,8 +123,9 @@ int main()
     printf("ACESSO CONCEDIDO NEGAOOOOOOOOO\n\n");
   }
 
-int continuar = 1;
-while(!continuar){
+int run = 1;
+int c;
+while(run){
   do
   {
     printf("Digite o valor do seu cheque separando centenas por '.' e centavos por ','): R$ ");
@@ -143,12 +146,17 @@ while(!continuar){
 
   printf("largura: %d, altura: %d", x, y);
 
-
-}
-}
-
-int Reprocessamento(int n){
-  desenhaQuadrado(1, 60, 12, 102, 7);
+  c = menuRepro();
+    SetColor(7);
+    if (c == 1)
+    {
+      continue;
+    }
+    else if (c == 2)
+    {
+      break;
+    }
+  }
 }
 
 
@@ -504,8 +512,6 @@ int menuInicio()
       system("cls");
       return op;
     }
-
-
     if (t == '\x1b')
     {
       system("cls");
@@ -566,6 +572,63 @@ void desenhaQuadrado(int x1, int y1, int x2, int y2, int cor)
   }
 
   escreveTexto(x2, y1, linha, cor);
+}
+void Repro(int op)
+{
+  char vet[][30] = {"SIM", "NAO"};
+  int i;
+  system("cls");
+  desenhaQuadrado(1, 60, 8, 90, 2);
+  escreveTexto(3, 67, "REPETIR PROCESSO?", 7);
+
+  for (i = 0; i < 2; i++)
+  {
+    escreveTexto(5 + i, 73, vet[i], 7);
+  }
+  escreveTexto(5 + op - 1, 73, vet[op - 1], 2);
+}
+
+int menuRepro()
+{
+  int op = 1;
+  char t;
+  Repro(op); 
+
+  do
+  {
+    t = getch();
+    if (t <= 0)
+    {
+      t = getch();
+      if (t == baixo)
+      {
+        if (op != 2)
+          op++;
+        else
+          op = 1;
+        Repro(op);
+      }
+      else if (t == cima)
+      {
+        if (op != 1)
+          op--;
+        else
+          op = 2;
+        Repro(op);
+      }
+    }
+    else if (t == enter)
+    {
+      system("cls");
+      return op;
+    }
+    if (t == esc)
+    {
+      system("cls");
+      return 2;
+    }
+  } while (t != esc);
+  return -1;
 }
 
 

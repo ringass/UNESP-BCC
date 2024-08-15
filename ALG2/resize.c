@@ -6,7 +6,6 @@
 #include <Windows.h>
 #include <conio.h>
 
-
 #define upleft
 #define botleft
 #define upright '╮'
@@ -17,13 +16,11 @@
 #define enter 13
 #define f1 59
 
-
 void gotoxy(int x, int y)
 {
   COORD pos = {x, y};
   SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
-
 
 int SetColor(char color)
 {
@@ -32,29 +29,30 @@ int SetColor(char color)
   return SetConsoleTextAttribute(h, color);
 }
 
-void getConsoleSize(int *width, int *height) {
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    int columns, rows;
+void getConsoleSize(int *width, int *height)
+{
+  CONSOLE_SCREEN_BUFFER_INFO csbi;
+  int columns, rows;
 
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+  GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
 
-    columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-    rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+  columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+  rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 
-    *width = columns;
-    *height = rows;
+  *width = columns;
+  *height = rows;
 }
 
-void resizeConsole(int width, int height) {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    
-    COORD bufferSize = {width, height};
-    SetConsoleScreenBufferSize(hConsole, bufferSize);
+void resizeConsole(int width, int height)
+{
+  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    SMALL_RECT windowSize = {0, 0, width - 1, height - 1};
-    SetConsoleWindowInfo(hConsole, TRUE, &windowSize);
+  COORD bufferSize = {width, height};
+  SetConsoleScreenBufferSize(hConsole, bufferSize);
+
+  SMALL_RECT windowSize = {0, 0, width - 1, height - 1};
+  SetConsoleWindowInfo(hConsole, TRUE, &windowSize);
 }
-
 
 const char BancoUser[] = "1";
 const char SenhaUser[] = "1";
@@ -64,7 +62,6 @@ const char dezenas[][12] = {"VINTE ", "TRINTA ", "QUARENTA ", "CINQUENTA ", "SES
 const char centenas[][14] = {"CEM ", "CENTO ", "DUZENTOS ", "TREZENTOS ", "QUATROCENTOS ", "QUINHENTOS ", "SEISCENTOS ", "SETECENTOS ", "OITOCENTOS ", "NOVECENTOS "};
 const char milhares[][11] = {"BILHAO", "MILHAO", "MIL"};
 const char milEspecial[][11] = {"BILHOES", "MILHOES", "MIL"};
-
 
 void SepararString(char n[5][4], char z[]);
 int Validacao(char *input);
@@ -78,15 +75,14 @@ void ajuda();
 int menuRepro();
 void Repro(int op);
 
-
 int main()
 {
   SetConsoleOutputCP(CP_UTF8);
   setlocale(LC_ALL, "Portuguese");
   char p[17], num[5][4];
-  system("mode 165,25");   
+  system("mode 165,25");
   SMALL_RECT WinRect = {0, 0, 165, 25};
-  SMALL_RECT* WinSize = &WinRect;
+  SMALL_RECT *WinSize = &WinRect;
   SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, WinSize);
 
   memset(p, '\0', sizeof(p));
@@ -120,33 +116,31 @@ int main()
   else
   {
     system("cls");
-    printf("ACESSO CONCEDIDO NEGAOOOOOOOOO\n\n");
+    escreveTexto(0, 0, "ACESSO CONCEDIDO NEGAOOOOOOOOO!\n", 4);
+    SetColor(7);
   }
 
-int run = 1;
-int c;
-while(run){
-  do
+  int run = 1;
+  int c;
+  while (run)
   {
-    printf("Digite o valor do seu cheque separando centenas por '.' e centavos por ','): R$ ");
-    scanf("%s", p);
-
-
-    if (!Validacao(p))
+    do
     {
-      printf("\nEntrada Invalida. Por favor, insira apenas numeros, '.' ou ','.\n\n");
-    }
-  } while (!Validacao(p));
-  SepararString(num, p);
+      printf("Digite o valor do seu cheque separando centenas por '.' e centavos por ','): R$ ");
+      scanf("%s", p);
 
-  int x, y;
+      if (!Validacao(p))
+      {
+        printf("\nEntrada Invalida. Por favor, insira apenas numeros, '.' ou ','.\n\n");
+      }
+    } while (!Validacao(p));
+    SepararString(num, p);
 
-  EscreverPorExtenso(num);
-  getConsoleSize(&x, &y);
+    int x, y;
 
-  printf("largura: %d, altura: %d", x, y);
-
-  c = menuRepro();
+    EscreverPorExtenso(num);
+    
+    c = menuRepro();
     SetColor(7);
     if (c == 1)
     {
@@ -159,12 +153,10 @@ while(run){
   }
 }
 
-
 void SepararString(char n[5][4], char z[])
 {
   char *token;
   int i = 0, count = 0;
-
 
   token = strtok(z, ".,");
   while (token != NULL && i < 5)
@@ -181,7 +173,6 @@ void SepararString(char n[5][4], char z[])
   }
 }
 
-
 int Validacao(char *input)
 {
   int length = strlen(input);
@@ -195,7 +186,6 @@ int Validacao(char *input)
   return 1;
 }
 
-
 void EscreverPorExtenso(char num[5][4])
 {
   int conv[5];
@@ -203,7 +193,6 @@ void EscreverPorExtenso(char num[5][4])
   int i;
   SetColor(7);
   char str[999] = "";
-
 
   for (i = 0; i < 5; i++)
   {
@@ -214,7 +203,6 @@ void EscreverPorExtenso(char num[5][4])
     }
   }
 
-
   for (int i = 0; i < partes; i++)
   {
     if (partes == 1)
@@ -224,9 +212,7 @@ void EscreverPorExtenso(char num[5][4])
     }
   }
 
-
   i = 0;
-
 
   while (i < partes)
   {
@@ -234,64 +220,57 @@ void EscreverPorExtenso(char num[5][4])
     int dozens = (conv[i] % 100) / 10;
     int units = (conv[i] % 10);
 
-
-   
-
-
     if (conv[i] == 100)
     {
-      strcat( str, centenas[0]);
+      strcat(str, centenas[0]);
       printf("%s", centenas[0]);
     }
     else
     {
 
-
       if (cents > 0 && dozens >= 1)
       {
-        strcat( str, centenas[cents]);
+        strcat(str, centenas[cents]);
         strcat(str, "E ");
         printf("%sE ", centenas[cents]);
       }
       else if (cents > 0)
       {
-        strcat( str, centenas[cents]);
+        strcat(str, centenas[cents]);
         printf("%s", centenas[cents]);
       }
 
-
       if (dozens == 1 && units >= 0)
       {
-        strcat( str, especiais[units]);
+        strcat(str, especiais[units]);
         printf("%s", especiais[units]);
       }
       else
       {
         if (dozens > 1)
         {
-          strcat( str, dezenas[dozens - 2]);
+          strcat(str, dezenas[dozens - 2]);
           printf("%s", dezenas[dozens - 2]);
           if (units > 0)
           {
-            strcat( str, "E ");
+            strcat(str, "E ");
             printf("E ");
           }
         }
         else if (dozens == 0 && cents > 0 && units > 0)
         {
-          strcat( str, "E ");
+          strcat(str, "E ");
           printf("E ");
         }
 
-
         if (units > 0)
         {
-          strcat( str, unidades[units - 1]);
+          strcat(str, unidades[units - 1]);
           printf("%s", unidades[units - 1]);
         }
         else if (units == 0 && i == partes - 1 && dozens == 0)
         {
-          strcat( str, "ZERO ");
+          strcat(str, "ZERO ");
           printf("ZERO ");
         }
       }
@@ -302,20 +281,25 @@ void EscreverPorExtenso(char num[5][4])
     case 5:
       if (i <= 2 && (conv[i] != 0)) //|| conv[i + 1] != 0))
       {
-        strcat( str, (units > 1 || dozens > 0 || cents > 0) ? milEspecial[i] : milhares[i]);
+        strcat(str, (units > 1 || dozens > 0 || cents > 0) ? milEspecial[i] : milhares[i]);
         printf("%s", (units > 1 || dozens > 0 || cents > 0) ? milEspecial[i] : milhares[i]);
-        
-        if (i == 1 && (conv[i+1] != 0 || conv[i+2] != 0))
+
+        if (i == 1 && (conv[i + 1] != 0 || conv[i + 2] != 0))
         {
-          strcat( str, ", ");
-          printf(", ");
-        }else if(i == 0 && (conv[i+1] != 0 || conv[i+2] != 0 || conv[i+3]) ){
-          strcat( str, ", ");
+          strcat(str, ", ");
           printf(", ");
         }
-        else if (i == 0 && conv[i + 1] == 0 && conv[i + 2] == 0 && conv[i+3] == 0)
+        else if (i == 0 && (conv[i + 1] != 0 || conv[i + 2] != 0 || conv[i + 3]))
         {
-          strcat( str, " DE ");
+          strcat(str, ", ");
+          printf(", ");
+        }
+        else if (i == 0 && conv[i + 1] == 0 && conv[i + 2] == 0 && conv[i + 3] == 0)
+        {
+          strcat(str, " DE ");
+          printf(" DE ");
+        }else if(i == 1 && conv[i + 1] == 0 && conv[i + 2] == 0 && conv[i + 3] == 0){
+           strcat(str, " DE ");
           printf(" DE ");
         }
         else if (i != partes - 1 && i != partes - 2)
@@ -323,35 +307,38 @@ void EscreverPorExtenso(char num[5][4])
           strcat(str, " ");
           printf(" ");
         }
-        if(i == partes - 3 && conv[i+1] != 0){
+        if (i == partes - 3 && conv[i + 1] != 0)
+        {
           strcat(str, "E ");
           printf("E ");
         }
       }
       break;
     case 4:
-      if (i <= 1 && (conv[i] != 0))
+      if (i <= 1 && conv[i] != 0)
       {
-        strcat( str, (units > 1 || dozens > 0 || cents > 1) ? milEspecial[i + 1] : milhares[i + 1]);
+        strcat(str, (units > 1 || dozens > 0 || cents > 1) ? milEspecial[i + 1] : milhares[i + 1]);
         printf("%s", (units > 1 || dozens > 0 || cents > 1) ? milEspecial[i + 1] : milhares[i + 1]);
-      if (i == 0 && (conv[i + 1] != 0|| conv[i+2] != 0))
-      {
-        strcat( str, ", ");
-        printf(", ");
-      }
-      else if (i == 0 && conv[i + 1] == 0 && conv[i+2] == 0)
-      {
-        strcat( str, " DE ");
-        printf(" DE ");
-      }else if(i == 1 && conv[i+1] == 0){
-        strcat( str, " ");
-        printf(" ");
-      }
-      if (i == partes - 3 && conv[i+1] != 0)
-      {
-        strcat(str, " E ");
-        printf(" E ");
-      }
+        if (i == 0 && (conv[i + 1] != 0 || conv[i + 2] != 0))
+        {
+          strcat(str, ", ");
+          printf(", ");
+        }
+        else if (i == 0 && conv[i + 1] == 0 && conv[i + 2] == 0)
+        {
+          strcat(str, " DE ");
+          printf(" DE ");
+        }
+        else if (i == 1 && conv[i + 1] == 0)
+        {
+          strcat(str, " ");
+          printf(" ");
+        }
+        if (i == partes - 3 && conv[i + 1] != 0)
+        {
+          strcat(str, " E ");
+          printf(" E ");
+        }
       }
       break;
     case 3:
@@ -364,12 +351,12 @@ void EscreverPorExtenso(char num[5][4])
       break;
     }
 
-    if (i == partes - 2 && conv[i] == 1 && conv[i-1] == 0)
+    if (i == partes - 2 && conv[i] == 1 && conv[i - 1] == 0)
     {
       strcat(str, "REAL E ");
       printf("REAL E ");
     }
-    else if (i == partes - 2 && (conv[i] > 1 || conv[i-1] != 0 || conv[i-2] != 0 || conv[i-3] != 0))
+    else if (i == partes - 2 && (conv[i] > 1 || conv[i - 1] != 0 || conv[i - 2] != 0 || conv[i - 3] != 0))
     {
       strcat(str, "REAIS E ");
       printf("REAIS E ");
@@ -384,7 +371,6 @@ void EscreverPorExtenso(char num[5][4])
   printf("%s", str);
 }
 
-
 int LoginLogic()
 {
   char tryName[15], senha[8];
@@ -395,22 +381,19 @@ int LoginLogic()
     desenhaQuadrado(1, 60, 12, 102, 7);
     escreveTexto(3, 75, "LOGIN PAGE", 7);
 
-
     while (x != 0)
     {
       escreveTexto(5, 65, "DIGITE SEU USERNAME:            ", 7);
       gotoxy(86, 5);
       scanf("%s", tryName);
 
-
       escreveTexto(7, 65, "DIGITE SUA SENHA:               ", 7);
       gotoxy(83, 7);
       scanf("%s", senha);
 
-
       if (strcmp(tryName, BancoUser) == 0 && strcmp(senha, SenhaUser) == 0)
       {
-        return 1;  
+        return 1;
       }
       else
       {
@@ -418,10 +401,8 @@ int LoginLogic()
         i++;
         x--;
 
-
         if (x > 0)
         {
-
 
           char tentativaMsg[50];
           sprintf(tentativaMsg, "Voce tem mais %d tentativa(s)", x);
@@ -429,11 +410,9 @@ int LoginLogic()
         }
       }
 
-
       escreveTexto(5, 86, "               ", 7);
       escreveTexto(7, 83, "               ", 7);
     }
-
 
     if (x == 0)
     {
@@ -443,13 +422,10 @@ int LoginLogic()
       escreveTexto(7, 63, "TODAS AS TENTATIVAS FORAM UTILIZADAS", 4);
       SetColor(7);
       gotoxy(13, 13);
-      return 0;  
+      return 0;
     }
   }
 }
-
-
-
 
 void escreveTexto(int x, int y, char texto[], int cor)
 {
@@ -457,7 +433,6 @@ void escreveTexto(int x, int y, char texto[], int cor)
   gotoxy(y, x);
   printf("%s", texto);
 }
-
 
 void inicio(int op)
 {
@@ -467,14 +442,12 @@ void inicio(int op)
   desenhaQuadrado(1, 60, 10, 102, 7);
   escreveTexto(3, 65, "BEM-VINDO AO TRABALHO DE CHEQUE\n", 7);
 
-
   for (i = 0; i < 3; i++)
   {
     escreveTexto(6 + i, 75, vet[i], 7);
   }
   escreveTexto(6 + op - 1, 75, vet[op - 1], 2);
 }
-
 
 int menuInicio()
 {
@@ -521,36 +494,36 @@ int menuInicio()
   return -1;
 }
 
+void ajuda()
+{
+  system("cls");
 
-void ajuda() {
-    system("cls");
+  desenhaQuadrado(1, 2, 20, 78, 7);
 
-    desenhaQuadrado(1, 2, 20, 78, 7); 
+  escreveTexto(3, 30, "::::: AJUDA :::::", 7);
+  escreveTexto(5, 4, "O programa funciona transformando seu numero", 7);
+  escreveTexto(6, 4, "em seu valor por extenso na lingua portuguesa.", 7);
+  escreveTexto(8, 4, "1- Nao esqueca de separar as centenas de milhar", 7);
+  escreveTexto(9, 4, "e centenas por pontos.", 7);
+  escreveTexto(11, 4, "2- Nao esqueca de adicionar os centavos e", 7);
+  escreveTexto(12, 4, "os separar por virgulas ou pontos.", 7);
+  escreveTexto(14, 4, "3- Para iniciar o programa sera necessario", 7);
+  escreveTexto(15, 4, "realizar login.", 7);
+  escreveTexto(16, 6, "-> A senha para entrar no programa eh 12345", 7);
+  escreveTexto(17, 6, "e o username eh admin10.", 7);
+  escreveTexto(19, 17, "::::: PRESSIONE ESC PARA VOLTAR AO MENU :::::", 7);
 
-    escreveTexto(3, 30, "::::: AJUDA :::::", 7);
-    escreveTexto(5, 4, "O programa funciona transformando seu numero", 7);
-    escreveTexto(6, 4, "em seu valor por extenso na lingua portuguesa.", 7);
-    escreveTexto(8, 4, "1- Nao esqueca de separar as centenas de milhar", 7);
-    escreveTexto(9, 4, "e centenas por pontos.", 7);
-    escreveTexto(11, 4, "2- Nao esqueca de adicionar os centavos e", 7);
-    escreveTexto(12, 4, "os separar por virgulas ou pontos.", 7);
-    escreveTexto(14, 4, "3- Para iniciar o programa sera necessario", 7);
-    escreveTexto(15, 4, "realizar login.", 7);
-    escreveTexto(16, 6, "-> A senha para entrar no programa eh 12345", 7);
-    escreveTexto(17, 6, "e o username eh admin10.", 7);
-    escreveTexto(19, 17, "::::: PRESSIONE ESC PARA VOLTAR AO MENU :::::", 7);
-
-    int t;
-    while (1) {
-        t = _getch();
-        if (t == esc) {
-            break;
-        }
+  int t;
+  while (1)
+  {
+    t = _getch();
+    if (t == esc)
+    {
+      break;
     }
-    main();
+  }
+  main();
 }
-
-
 
 void desenhaQuadrado(int x1, int y1, int x2, int y2, int cor)
 {
@@ -561,9 +534,7 @@ void desenhaQuadrado(int x1, int y1, int x2, int y2, int cor)
   }
   linha[y2 - y1 + 1] = '\0';
 
-
   escreveTexto(x1, y1, linha, cor);
-
 
   for (int i = x1 + 1; i < x2; i++)
   {
@@ -577,22 +548,21 @@ void Repro(int op)
 {
   char vet[][30] = {"SIM", "NAO"};
   int i;
-  system("cls");
-  desenhaQuadrado(1, 60, 8, 90, 2);
-  escreveTexto(3, 67, "REPETIR PROCESSO?", 7);
+  desenhaQuadrado(9, 60, 16, 90, 7);
+  escreveTexto(11, 67, "REPETIR PROCESSO?", 7);
 
   for (i = 0; i < 2; i++)
   {
-    escreveTexto(5 + i, 73, vet[i], 7);
+    escreveTexto(13 + i, 73, vet[i], 7);
   }
-  escreveTexto(5 + op - 1, 73, vet[op - 1], 2);
+  escreveTexto(13 + op - 1, 73, vet[op - 1], 2);
 }
 
 int menuRepro()
 {
   int op = 1;
   char t;
-  Repro(op); 
+  Repro(op);
 
   do
   {
@@ -630,5 +600,3 @@ int menuRepro()
   } while (t != esc);
   return -1;
 }
-
-

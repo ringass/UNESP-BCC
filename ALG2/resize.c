@@ -5,16 +5,15 @@
 #include <locale.h>
 #include <Windows.h>
 #include <conio.h>
+#include <time.h>
+#include <stdlib.h>
 
-#define upleft
-#define botleft
-#define upright '╮'
-#define botright
 #define baixo 80
 #define cima 72
 #define esc 27
 #define enter 13
 #define f1 59
+#define MAX 20
 
 void gotoxy(int x, int y)
 {
@@ -65,7 +64,7 @@ const char milEspecial[][11] = {"BILHOES", "MILHOES", "MIL"};
 
 void SepararString(char n[5][4], char z[]);
 int Validacao(char *input);
-void EscreverPorExtenso(char num[5][4]);
+void EscreverPorExtenso(char num[5][4], char extension[]);
 int LoginLogic();
 void escreveTexto(int x, int y, char texto[], int cor);
 void desenhaQuadrado(int x1, int y1, int x2, int y2, int cor);
@@ -74,6 +73,8 @@ int menuInicio();
 void ajuda();
 int menuRepro();
 void Repro(int op);
+void GetTime(char p[]);
+void LogScreen(char numero[MAX][50], char hora[MAX][50], char extenso[MAX][999], int count);
 
 int main()
 {
@@ -121,7 +122,8 @@ int main()
   }
 
   int run = 1;
-  int c;
+  int c, x = 0;
+  char hora[MAX][50], number[MAX][50], extension[MAX][999];
   while (run)
   {
     do
@@ -134,12 +136,13 @@ int main()
         printf("\nEntrada Invalida. Por favor, insira apenas numeros, '.' ou ','.\n\n");
       }
     } while (!Validacao(p));
-    SepararString(num, p);
-
-    int x, y;
-
-    EscreverPorExtenso(num);
     
+    strcpy(number[x], p);
+    SepararString(num, p);
+    EscreverPorExtenso(num, extension[x]);
+    GetTime(hora[x]);
+    x++;
+
     c = menuRepro();
     SetColor(7);
     if (c == 1)
@@ -148,6 +151,7 @@ int main()
     }
     else if (c == 2)
     {
+      LogScreen(number, hora, extension, x);
       break;
     }
   }
@@ -186,7 +190,7 @@ int Validacao(char *input)
   return 1;
 }
 
-void EscreverPorExtenso(char num[5][4])
+void EscreverPorExtenso(char num[5][4], char copy[])
 {
   int conv[5];
   int partes = 0;
@@ -298,8 +302,10 @@ void EscreverPorExtenso(char num[5][4])
         {
           strcat(str, " DE ");
           printf(" DE ");
-        }else if(i == 1 && conv[i + 1] == 0 && conv[i + 2] == 0 && conv[i + 3] == 0){
-           strcat(str, " DE ");
+        }
+        else if (i == 1 && conv[i + 1] == 0 && conv[i + 2] == 0 && conv[i + 3] == 0)
+        {
+          strcat(str, " DE ");
           printf(" DE ");
         }
         else if (i != partes - 1 && i != partes - 2)
@@ -368,7 +374,22 @@ void EscreverPorExtenso(char num[5][4])
     }
     i++;
   }
+  strcpy(copy, str);
   printf("%s", str);
+}
+
+void GetTime(char p[])
+{
+  struct tm *hora_atual;
+
+  time_t segundos;
+
+  time(&segundos);
+
+  hora_atual = localtime(&segundos);
+  char Horario[50];
+  sprintf(Horario, "HORA: %02d:%02d:%02d", hora_atual->tm_hour, hora_atual->tm_min, hora_atual->tm_sec);
+  strcpy(p, Horario);
 }
 
 int LoginLogic()
@@ -599,4 +620,22 @@ int menuRepro()
     }
   } while (t != esc);
   return -1;
+}
+
+void LogScreen(char numero[MAX][50], char hora[MAX][50], char extenso[MAX][999], int count)
+{
+  int x, y;
+  getConsoleSize(&x, &y);
+  for(int j = 0; j < x; j++){
+      printf("*");
+    }
+  for(int i = 0; i < count; i++){
+    printf("%s\n", hora[i]);
+    printf("Valor Monetario em numerais -> %s\n", numero[i]);
+    printf("Valor por Extenso -> %s\n", extenso[i]);
+    for(int j = 0; j < x; j++){
+      printf("*");
+    }
+    printf("\n\n");
+  }
 }

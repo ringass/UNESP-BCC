@@ -53,8 +53,16 @@ void resizeConsole(int width, int height)
   SetConsoleWindowInfo(hConsole, TRUE, &windowSize);
 }
 
+int wherey()
+{
+    CONSOLE_SCREEN_BUFFER_INFO csbi;    
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);    
+    return csbi.dwCursorPosition.Y;
+}
+
 const char BancoUser[] = "1";
 const char SenhaUser[] = "1";
+
 const char unidades[][12] = {"UM ", "DOIS ", "TRES ", "QUATRO ", "CINCO ", "SEIS ", "SETE ", "OITO ", "NOVE "};
 const char especiais[][12] = {"DEZ ", "ONZE ", "DOZE ", "TREZE ", "QUATORZE ", "QUINZE ", "DEZESSEIS ", "DEZESSETE ", "DEZOITO ", "DEZENOVE "};
 const char dezenas[][12] = {"VINTE ", "TRINTA ", "QUARENTA ", "CINQUENTA ", "SESSENTA ", "SETENTA ", "OITENTA ", "NOVENTA "};
@@ -71,8 +79,8 @@ void desenhaQuadrado(int x1, int y1, int x2, int y2, int cor);
 void inicio(int op);
 int menuInicio();
 void ajuda();
-int menuRepro();
-void Repro(int op);
+int menuRepro(int line);
+void Repro(int op, int line);
 void GetTime(char p[]);
 void LogScreen(char numero[MAX][50], char hora[MAX][50], char extenso[MAX][999], int count);
 
@@ -81,8 +89,8 @@ int main()
   SetConsoleOutputCP(CP_UTF8);
   setlocale(LC_ALL, "Portuguese");
   char p[17], num[5][4];
-  system("mode 165,25");
-  SMALL_RECT WinRect = {0, 0, 165, 25};
+  system("mode 165, 45");
+  SMALL_RECT WinRect = {0, 0, 165, 45};
   SMALL_RECT *WinSize = &WinRect;
   SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, WinSize);
 
@@ -122,8 +130,9 @@ int main()
   }
 
   int run = 1;
-  int c, x = 0;
+  int c, x = 0, line = 0;
   char hora[MAX][50], number[MAX][50], extension[MAX][999];
+
   while (run)
   {
     do
@@ -140,10 +149,11 @@ int main()
     strcpy(number[x], p);
     SepararString(num, p);
     EscreverPorExtenso(num, extension[x]);
+    line = wherey();
     GetTime(hora[x]);
     x++;
 
-    c = menuRepro();
+    c = menuRepro(line);
     SetColor(7);
     if (c == 1)
     {
@@ -160,33 +170,61 @@ int main()
 void SepararString(char n[5][4], char z[])
 {
   char *token;
-  int i = 0, count = 0;
+  int i = 0;
 
   token = strtok(z, ".,");
   while (token != NULL && i < 5)
   {
-    count++;
     strncpy(n[i], token, 3);
     n[i][3] = '\0';
     i++;
     token = strtok(NULL, ".,");
-  }
-  if (isdigit(n[count - 1][2]))
-  {
-    n[count - 1][2] = '\0';
   }
 }
 
 int Validacao(char *input)
 {
   int length = strlen(input);
+
+  if (length > 18)
+  {
+    return 0;
+  }
+
+  if (length == 7) {
+    for (int i = length; i > 1; i--) {
+      input[i] = input[i - 1];
+    }
+    input[1] = '.';
+    input[length + 1] = '\0';  
+  }
+
+  int count = 0;
   for (int i = 0; i < length; i++)
   {
-    if (!isdigit(input[i]) && input[i] != '.' && input[i] != ',')
+    if (isdigit(input[i]))
     {
-      return 0;
+      count++;
+    }
+    else if (input[i] == '.' || input[i] == ',')
+    {
+      if (count > 3) 
+      {
+        return 0;
+      }
+      count = 0; 
+    }
+    else
+    {
+      return 0; 
     }
   }
+
+  if (count > 3)
+  {
+    return 0;
+  }
+
   return 1;
 }
 
@@ -223,7 +261,7 @@ void EscreverPorExtenso(char num[5][4], char copy[])
     int cents = conv[i] / 100;
     int dozens = (conv[i] % 100) / 10;
     int units = (conv[i] % 10);
-
+  
     if (conv[i] == 100)
     {
       strcat(str, centenas[0]);
@@ -236,46 +274,38 @@ void EscreverPorExtenso(char num[5][4], char copy[])
       {
         strcat(str, centenas[cents]);
         strcat(str, "E ");
-        printf("%sE ", centenas[cents]);
       }
       else if (cents > 0)
       {
         strcat(str, centenas[cents]);
-        printf("%s", centenas[cents]);
       }
 
       if (dozens == 1 && units >= 0)
       {
         strcat(str, especiais[units]);
-        printf("%s", especiais[units]);
       }
       else
       {
         if (dozens > 1)
         {
           strcat(str, dezenas[dozens - 2]);
-          printf("%s", dezenas[dozens - 2]);
           if (units > 0)
           {
             strcat(str, "E ");
-            printf("E ");
           }
         }
         else if (dozens == 0 && cents > 0 && units > 0)
         {
           strcat(str, "E ");
-          printf("E ");
         }
 
         if (units > 0)
         {
           strcat(str, unidades[units - 1]);
-          printf("%s", unidades[units - 1]);
         }
         else if (units == 0 && i == partes - 1 && dozens == 0)
         {
           strcat(str, "ZERO ");
-          printf("ZERO ");
         }
       }
     }
@@ -286,37 +316,29 @@ void EscreverPorExtenso(char num[5][4], char copy[])
       if (i <= 2 && (conv[i] != 0)) //|| conv[i + 1] != 0))
       {
         strcat(str, (units > 1 || dozens > 0 || cents > 0) ? milEspecial[i] : milhares[i]);
-        printf("%s", (units > 1 || dozens > 0 || cents > 0) ? milEspecial[i] : milhares[i]);
-
         if (i == 1 && (conv[i + 1] != 0 || conv[i + 2] != 0))
         {
           strcat(str, ", ");
-          printf(", ");
         }
         else if (i == 0 && (conv[i + 1] != 0 || conv[i + 2] != 0 || conv[i + 3]))
         {
           strcat(str, ", ");
-          printf(", ");
         }
         else if (i == 0 && conv[i + 1] == 0 && conv[i + 2] == 0 && conv[i + 3] == 0)
         {
           strcat(str, " DE ");
-          printf(" DE ");
         }
         else if (i == 1 && conv[i + 1] == 0 && conv[i + 2] == 0 && conv[i + 3] == 0)
         {
           strcat(str, " DE ");
-          printf(" DE ");
         }
         else if (i != partes - 1 && i != partes - 2)
         {
           strcat(str, " ");
-          printf(" ");
         }
         if (i == partes - 3 && conv[i + 1] != 0)
         {
           strcat(str, "E ");
-          printf("E ");
         }
       }
       break;
@@ -324,26 +346,21 @@ void EscreverPorExtenso(char num[5][4], char copy[])
       if (i <= 1 && conv[i] != 0)
       {
         strcat(str, (units > 1 || dozens > 0 || cents > 1) ? milEspecial[i + 1] : milhares[i + 1]);
-        printf("%s", (units > 1 || dozens > 0 || cents > 1) ? milEspecial[i + 1] : milhares[i + 1]);
         if (i == 0 && (conv[i + 1] != 0 || conv[i + 2] != 0))
         {
           strcat(str, ", ");
-          printf(", ");
         }
         else if (i == 0 && conv[i + 1] == 0 && conv[i + 2] == 0)
         {
           strcat(str, " DE ");
-          printf(" DE ");
         }
         else if (i == 1 && conv[i + 1] == 0)
         {
           strcat(str, " ");
-          printf(" ");
         }
         if (i == partes - 3 && conv[i + 1] != 0)
         {
           strcat(str, " E ");
-          printf(" E ");
         }
       }
       break;
@@ -351,7 +368,6 @@ void EscreverPorExtenso(char num[5][4], char copy[])
       if (i == 0 && conv[i] != 0)
       {
         strcat(str, milhares[i + 2]);
-        printf("%s ", milhares[i + 2]);
         strcat(str, " ");
       }
       break;
@@ -360,17 +376,14 @@ void EscreverPorExtenso(char num[5][4], char copy[])
     if (i == partes - 2 && conv[i] == 1 && conv[i - 1] == 0)
     {
       strcat(str, "REAL E ");
-      printf("REAL E ");
     }
     else if (i == partes - 2 && (conv[i] > 1 || conv[i - 1] != 0 || conv[i - 2] != 0 || conv[i - 3] != 0))
     {
       strcat(str, "REAIS E ");
-      printf("REAIS E ");
     }
     if (i == partes - 1)
     {
       strcat(str, "CENTAVOS");
-      printf("CENTAVOS\n");
     }
     i++;
   }
@@ -565,25 +578,32 @@ void desenhaQuadrado(int x1, int y1, int x2, int y2, int cor)
 
   escreveTexto(x2, y1, linha, cor);
 }
-void Repro(int op)
+void Repro(int op, int line)
 {
   char vet[][30] = {"SIM", "NAO"};
   int i;
-  desenhaQuadrado(9, 60, 16, 90, 7);
-  escreveTexto(11, 67, "REPETIR PROCESSO?", 7);
+  
+  // Desenhe o quadrado começando na posição 'line + 2'
+  desenhaQuadrado(line + 2, 60, line + 9, 90, 7);
+
+  // Escreva o texto na posição correta
+  escreveTexto(line + 4, 67, "REPETIR PROCESSO?", 7);
 
   for (i = 0; i < 2; i++)
   {
-    escreveTexto(13 + i, 73, vet[i], 7);
+    escreveTexto(line + 6 + i, 73, vet[i], 7);
   }
-  escreveTexto(13 + op - 1, 73, vet[op - 1], 2);
+
+  escreveTexto(line + 6 + op - 1, 73, vet[op - 1], 2);
 }
 
-int menuRepro()
+int menuRepro(int line)
 {
   int op = 1;
   char t;
-  Repro(op);
+  
+  // Passe 'line' para a função Repro
+  Repro(op, line);
 
   do
   {
@@ -597,7 +617,9 @@ int menuRepro()
           op++;
         else
           op = 1;
-        Repro(op);
+        
+        // Atualize a posição do quadrado ao movimentar a opção
+        Repro(op, line);
       }
       else if (t == cima)
       {
@@ -605,7 +627,9 @@ int menuRepro()
           op--;
         else
           op = 2;
-        Repro(op);
+        
+        // Atualize a posição do quadrado ao movimentar a opção
+        Repro(op, line);
       }
     }
     else if (t == enter)
@@ -619,23 +643,26 @@ int menuRepro()
       return 2;
     }
   } while (t != esc);
+  
   return -1;
 }
+
 
 void LogScreen(char numero[MAX][50], char hora[MAX][50], char extenso[MAX][999], int count)
 {
   int x, y;
   getConsoleSize(&x, &y);
-  for(int j = 0; j < x; j++){
-      printf("*");
-    }
   for(int i = 0; i < count; i++){
-    printf("%s\n", hora[i]);
-    printf("Valor Monetario em numerais -> %s\n", numero[i]);
-    printf("Valor por Extenso -> %s\n", extenso[i]);
     for(int j = 0; j < x; j++){
       printf("*");
     }
-    printf("\n\n");
+    printf("\n");
+    printf("%s\n", hora[i]);
+    printf("Valor Monetario em numerais -> %s\n", numero[i]);
+    printf("Valor por Extenso -> %s\n", extenso[i]);
+    printf("\n");
+  }
+  for(int j = 0; j < x; j++){
+      printf("*");
   }
 }

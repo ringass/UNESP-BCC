@@ -1,171 +1,17 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
-#include <locale.h>
-#include <Windows.h>
-#include <conio.h>
-#include <time.h>
-#include <stdlib.h>
+//funcoes.h
+#include "funcoes.h"
 
-#define baixo 80
-#define cima 72
-#define esc 27
-#define enter 13
-#define f1 59
-#define MAX 20
+//INFORMACOES PARA LOGIN
+const char BancoUser[] = "admin10"; 
+const char SenhaUser[] = "12345";
 
-void gotoxy(int x, int y)
-{
-  COORD pos = {x, y};
-  SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-}
-
-int SetColor(char color)
-{
-  HANDLE h;
-  h = GetStdHandle(STD_OUTPUT_HANDLE);
-  return SetConsoleTextAttribute(h, color);
-}
-
-void getConsoleSize(int *width, int *height)
-{
-  CONSOLE_SCREEN_BUFFER_INFO csbi;
-  int columns, rows;
-
-  GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-
-  columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-  rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-
-  *width = columns;
-  *height = rows;
-}
-
-void resizeConsole(int width, int height)
-{
-  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-  COORD bufferSize = {width, height};
-  SetConsoleScreenBufferSize(hConsole, bufferSize);
-
-  SMALL_RECT windowSize = {0, 0, width - 1, height - 1};
-  SetConsoleWindowInfo(hConsole, TRUE, &windowSize);
-}
-
-int wherey()
-{
-    CONSOLE_SCREEN_BUFFER_INFO csbi;    
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);    
-    return csbi.dwCursorPosition.Y;
-}
-
-const char BancoUser[] = "1";
-const char SenhaUser[] = "1";
-
+//DEFINICAO DE VARIAVEIS PARA ESCREVER POR EXTENSO
 const char unidades[][12] = {"UM ", "DOIS ", "TRES ", "QUATRO ", "CINCO ", "SEIS ", "SETE ", "OITO ", "NOVE "};
 const char especiais[][12] = {"DEZ ", "ONZE ", "DOZE ", "TREZE ", "QUATORZE ", "QUINZE ", "DEZESSEIS ", "DEZESSETE ", "DEZOITO ", "DEZENOVE "};
 const char dezenas[][12] = {"VINTE ", "TRINTA ", "QUARENTA ", "CINQUENTA ", "SESSENTA ", "SETENTA ", "OITENTA ", "NOVENTA "};
 const char centenas[][14] = {"CEM ", "CENTO ", "DUZENTOS ", "TREZENTOS ", "QUATROCENTOS ", "QUINHENTOS ", "SEISCENTOS ", "SETECENTOS ", "OITOCENTOS ", "NOVECENTOS "};
 const char milhares[][11] = {"BILHAO", "MILHAO", "MIL"};
 const char milEspecial[][11] = {"BILHOES", "MILHOES", "MIL"};
-
-void SepararString(char n[5][4], char z[]);
-int Validacao(char *input);
-void EscreverPorExtenso(char num[5][4], char extension[]);
-int LoginLogic();
-void escreveTexto(int x, int y, char texto[], int cor);
-void desenhaQuadrado(int x1, int y1, int x2, int y2, int cor);
-void inicio(int op);
-int menuInicio();
-void ajuda();
-int menuRepro(int line);
-void Repro(int op, int line);
-void GetTime(char p[]);
-void LogScreen(char numero[MAX][50], char hora[MAX][50], char extenso[MAX][999], int count);
-
-int main()
-{
-  SetConsoleOutputCP(CP_UTF8);
-  setlocale(LC_ALL, "Portuguese");
-  char p[17], num[5][4];
-  system("mode 165, 45");
-  SMALL_RECT WinRect = {0, 0, 165, 45};
-  SMALL_RECT *WinSize = &WinRect;
-  SetConsoleWindowInfo(GetStdHandle(STD_OUTPUT_HANDLE), TRUE, WinSize);
-
-  memset(p, '\0', sizeof(p));
-  memset(num, '\0', sizeof(num));
-
-  int continuar = 1;
-  int b;
-  while (continuar)
-  {
-    b = menuInicio();
-    SetColor(7);
-    if (b == 1)
-    {
-      break;
-    }
-    else if (b == 2)
-    {
-      printf("Saindo...\n\n");
-      exit(0);
-    }
-    else if (b == 11 || b == 3)
-    {
-      ajuda();
-    }
-  }
-
-  if (!LoginLogic())
-  {
-    return 0;
-  }
-  else
-  {
-    system("cls");
-    escreveTexto(0, 0, "ACESSO CONCEDIDO NEGAOOOOOOOOO!\n", 4);
-    SetColor(7);
-  }
-
-  int run = 1;
-  int c, x = 0, line = 0;
-  char hora[MAX][50], number[MAX][50], extension[MAX][999];
-
-  while (run)
-  {
-    do
-    {
-      printf("Digite o valor do seu cheque separando centenas por '.' e centavos por ','): R$ ");
-      scanf("%s", p);
-
-      if (!Validacao(p))
-      {
-        printf("\nEntrada Invalida. Por favor, insira apenas numeros, '.' ou ','.\n\n");
-      }
-    } while (!Validacao(p));
-    
-    strcpy(number[x], p);
-    SepararString(num, p);
-    EscreverPorExtenso(num, extension[x]);
-    line = wherey();
-    GetTime(hora[x]);
-    x++;
-
-    c = menuRepro(line);
-    SetColor(7);
-    if (c == 1)
-    {
-      continue;
-    }
-    else if (c == 2)
-    {
-      LogScreen(number, hora, extension, x);
-      break;
-    }
-  }
-}
 
 void SepararString(char n[5][4], char z[])
 {
@@ -230,7 +76,7 @@ int Validacao(char *input)
 
 void EscreverPorExtenso(char num[5][4], char copy[])
 {
-  int conv[5];
+  int conv[5] = {0};
   int partes = 0;
   int i;
   SetColor(7);
@@ -245,15 +91,12 @@ void EscreverPorExtenso(char num[5][4], char copy[])
     }
   }
 
-  for (int i = 0; i < partes; i++)
-  {
     if (partes == 1)
     {
       conv[i + 1] = 0;
       partes = partes + 1;
     }
-  }
-
+    
   i = 0;
 
   while (i < partes)
@@ -261,15 +104,18 @@ void EscreverPorExtenso(char num[5][4], char copy[])
     int cents = conv[i] / 100;
     int dozens = (conv[i] % 100) / 10;
     int units = (conv[i] % 10);
-  
+
+    if (i == partes - 1 && (conv[i] == 0 || conv[i] > 99))
+    {
+        conv[i] = 0;
+    }
+
     if (conv[i] == 100)
     {
       strcat(str, centenas[0]);
-      printf("%s", centenas[0]);
     }
     else
     {
-
       if (cents > 0 && dozens >= 1)
       {
         strcat(str, centenas[cents]);
@@ -303,17 +149,16 @@ void EscreverPorExtenso(char num[5][4], char copy[])
         {
           strcat(str, unidades[units - 1]);
         }
-        else if (units == 0 && i == partes - 1 && dozens == 0)
+        else if (units == 0 && i == partes - 1 && dozens == 0 && cents == 0)
         {
           strcat(str, "ZERO ");
         }
       }
     }
-
     switch (partes)
     {
     case 5:
-      if (i <= 2 && (conv[i] != 0)) //|| conv[i + 1] != 0))
+      if (i <= 2 && (conv[i] != 0)) 
       {
         strcat(str, (units > 1 || dozens > 0 || cents > 0) ? milEspecial[i] : milhares[i]);
         if (i == 1 && (conv[i + 1] != 0 || conv[i + 2] != 0))
@@ -543,8 +388,8 @@ void ajuda()
   escreveTexto(12, 4, "os separar por virgulas ou pontos.", 7);
   escreveTexto(14, 4, "3- Para iniciar o programa sera necessario", 7);
   escreveTexto(15, 4, "realizar login.", 7);
-  escreveTexto(16, 6, "-> A senha para entrar no programa eh 12345", 7);
-  escreveTexto(17, 6, "e o username eh admin10.", 7);
+  escreveTexto(16, 6, "-> A senha para entrar no programa eh ::::12345::::", 7);
+  escreveTexto(17, 6, "-> O username eh ::::admin10::::", 7);
   escreveTexto(19, 17, "::::: PRESSIONE ESC PARA VOLTAR AO MENU :::::", 7);
 
   int t;
@@ -583,10 +428,9 @@ void Repro(int op, int line)
   char vet[][30] = {"SIM", "NAO"};
   int i;
   
-  // Desenhe o quadrado começando na posição 'line + 2'
+
   desenhaQuadrado(line + 2, 60, line + 9, 90, 7);
 
-  // Escreva o texto na posição correta
   escreveTexto(line + 4, 67, "REPETIR PROCESSO?", 7);
 
   for (i = 0; i < 2; i++)
@@ -602,7 +446,6 @@ int menuRepro(int line)
   int op = 1;
   char t;
   
-  // Passe 'line' para a função Repro
   Repro(op, line);
 
   do
@@ -618,7 +461,6 @@ int menuRepro(int line)
         else
           op = 1;
         
-        // Atualize a posição do quadrado ao movimentar a opção
         Repro(op, line);
       }
       else if (t == cima)
@@ -627,8 +469,6 @@ int menuRepro(int line)
           op--;
         else
           op = 2;
-        
-        // Atualize a posição do quadrado ao movimentar a opção
         Repro(op, line);
       }
     }
@@ -665,4 +505,50 @@ void LogScreen(char numero[MAX][50], char hora[MAX][50], char extenso[MAX][999],
   for(int j = 0; j < x; j++){
       printf("*");
   }
+}
+
+
+void gotoxy(int x, int y)
+{
+  COORD pos = {x, y};
+  SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+}
+
+int SetColor(char color)
+{
+  HANDLE h;
+  h = GetStdHandle(STD_OUTPUT_HANDLE);
+  return SetConsoleTextAttribute(h, color);
+}
+
+void getConsoleSize(int *width, int *height)
+{
+  CONSOLE_SCREEN_BUFFER_INFO csbi;
+  int columns, rows;
+
+  GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+
+  columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+  rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+  *width = columns;
+  *height = rows;
+}
+
+void resizeConsole(int width, int height)
+{
+  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+  COORD bufferSize = {width, height};
+  SetConsoleScreenBufferSize(hConsole, bufferSize);
+
+  SMALL_RECT windowSize = {0, 0, width - 1, height - 1};
+  SetConsoleWindowInfo(hConsole, TRUE, &windowSize);
+}
+
+int wherey()
+{
+    CONSOLE_SCREEN_BUFFER_INFO csbi;    
+    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);    
+    return csbi.dwCursorPosition.Y;
 }

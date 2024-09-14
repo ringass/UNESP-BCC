@@ -1,0 +1,4 @@
+LOGIN = admin10
+SENHA = 12345
+
+Se for possivel execute no cmd para que o resize funcione, será melhor para visualizar os menus. Caso seja pelo VSCODE aumente o tamanho do prompt de comando.

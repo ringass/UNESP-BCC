@@ -39,7 +39,7 @@ int main()
   else
   {
     system("cls");
-    escreveTexto(0, 0, "ACESSO CONCEDIDO NEGAOOOOOOOOO!\n", 4);
+    escreveTexto(0, 0, "ACESSO CONCEDIDO!\n", 2);
     SetColor(7);
   }
 

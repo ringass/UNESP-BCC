@@ -6,30 +6,35 @@
 #include <string.h>
 #include <windows.h>
 
+//defines para a BoxDraw
 #define upleft "\u256D"
 #define upright "\u256E"
 #define botleft "\u2570"
 #define botright "\u256F"
 #define hline "\u2500"
 #define vline "\u2502"
+
+//defines para o MenuLogic
 #define baixo 80
 #define cima 72
 #define esc 27
 #define enter 13
 #define f1 59
 
-
+//posiciona o cursor em uma coord
 void gotoxy(int x, int y) {
   COORD pos = {x, y};
   SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 
+//seleciona uma cor para o console
 int SetColor(char color) {
   HANDLE h;
   h = GetStdHandle(STD_OUTPUT_HANDLE);
   return SetConsoleTextAttribute(h, color);
 }
 
+//Retorna o tamanho atual do console
 void getConsoleSize(int *width, int *height) {
   CONSOLE_SCREEN_BUFFER_INFO csbi;
   GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
@@ -38,6 +43,7 @@ void getConsoleSize(int *width, int *height) {
   *height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 }
 
+//Redimensiona o console
 void resizeConsole(int width, int height) {
   HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -48,16 +54,20 @@ void resizeConsole(int width, int height) {
   SetConsoleWindowInfo(hConsole, TRUE, &windowSize);
 }
 
+//Insere o texto com coord e cores especificas
 void DisplayText(int x, int y, char text[], int color) {
   SetColor(color);
   gotoxy(y, x);
   printf("%s", text);
 }
 
+//tela de ajuda ao apertar f1 ou selecionar no menu
 void HelpScreen() { 
   system("cls"); 
   }
 
+
+//desenha uma caixa com as coord passadas
 void BoxDraw(int xI, int xF, int yI, int yF, int color) {
   int i;
 
@@ -83,6 +93,7 @@ void BoxDraw(int xI, int xF, int yI, int yF, int color) {
   printf("%s", botright);
 }
 
+//Impressao do menu
 void MenuDisplay(int op) {
     char v[][30] = { "Inserir", "Alterar", "Remover", "Consultar", "Ajuda(F1)", "Sair(Esc)" };
     int i;
@@ -104,6 +115,8 @@ void MenuDisplay(int op) {
     gotoxy(0, 29);
 }
 
+
+//funcionamento do menu
 int MenuLogic() {
     int op = 1;  
     char t;
@@ -143,7 +156,7 @@ int MenuLogic() {
     return -1;
 }
 
-
+//main
 int main() {
 
   SetConsoleOutputCP(CP_UTF8);

@@ -41,7 +41,6 @@ int main()
 
   
     printf("Vogais: %d\nConsoantes: %d\n", vog, con);
-
     
     fclose(arq);
 

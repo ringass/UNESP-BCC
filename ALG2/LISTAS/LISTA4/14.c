@@ -32,6 +32,5 @@ int main() {
     }
 
     fclose(saida);
-
     return 0;
 }

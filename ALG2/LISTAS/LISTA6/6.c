@@ -1,0 +1,1 @@
+// o tempo para realizar a busca binaria em um vetor com n^2 elementos é de 2t, pois a complexidade da busca binaria é n*log(n);

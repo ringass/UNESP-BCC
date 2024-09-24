@@ -1,0 +1,1 @@
+// sim, pois ele é a media e o while(e < d -1) nos garante que teremos sempre 2 numeros entre "e" e 'd';

@@ -13,7 +13,7 @@
 #define botright "\u256F"
 #define hline "\u2500"
 #define vline "\u2502"
-
+#define MAX 200
 //defines para o MenuLogic
 #define baixo 80
 #define cima 72
@@ -62,9 +62,40 @@ void DisplayText(int x, int y, char text[], int color) {
 }
 
 //tela de ajuda ao apertar f1 ou selecionar no menu
-void HelpScreen() { 
-  system("cls"); 
+void descript(char *v){
+  for(int i = 0; i < strlen(v); i++){
+    
+    if(v[i] == ' ' || v[i] == '\n'){
+      continue;
+    }else{
+      v[i] = v[i] - 9;
+    }
+    
   }
+}
+
+
+void HelpScreen() {
+
+  FILE *arq = fopen("ajuda.txt", "r");
+
+  char linha[100];
+
+  if(arq == NULL){
+    printf("Erro ao abrir o arquivo ajuda");
+    return;
+  }
+
+  int i = 0;
+
+  while(fgets(linha, sizeof(linha), arq)){
+    i++;   
+    descript(linha);
+    
+    DisplayText(4+i, 55, linha, 4);
+    //printf("%s ", linha);
+  }
+}
 
 
 //desenha uma caixa com as coord passadas
@@ -121,7 +152,7 @@ int MenuLogic() {
     int op = 1;  
     char t;
 
-    DisplayText(3, 20, "PROJETO BLABLABLA", 7);
+    DisplayText(3, 20, "PROJETO POKEDEX", 7);
     BoxDraw(1, 27, 0, 50, 9);
 
     MenuDisplay(op);
@@ -183,9 +214,10 @@ int main() {
       break;
     }else if(b == 5 || b == 11){
       //func para abrir arquivo ajuda.txt e mostrar no cmd
-      break;
+      HelpScreen();
+      
     }
-    else if( b == 6){
+    else if( b == 6 || b == -1){
       printf("SAINDO DO PROGRAMA VALEUU FIO\n\n");
       exit(1);
     }

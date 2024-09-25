@@ -26,9 +26,8 @@ void conc(int lcase, char *newstr, char *token) {
 
 
 void leitura(FILE *file, FILE *origem, FILE *temp){
-    char newstr[MAX], str[MAX];
 
-    
+    char newstr[MAX], str[MAX];
 
     if (temp == NULL) {
         printf("Erro ao abrir o arquivo temporário.\n");
@@ -85,10 +84,14 @@ void leitura(FILE *file, FILE *origem, FILE *temp){
             token = strtok(NULL, " ");
         }
 
+   
         fprintf(temp, "%s", newstr);
         printf("%s", newstr); 
     }
+    printf("\n");
 }
+
+
 
 
 int main() {
@@ -103,6 +106,7 @@ int main() {
         name[strcspn(name, "\n")] = '\0';  
 
         strcpy(name,strcat(name, ".txt"));
+        printf("\n");
 
         FILE *origem = fopen(name, "r");
         FILE *file = fopen("dicionario.txt", "r");
@@ -112,6 +116,18 @@ int main() {
             printf("Erro ao abrir o arquivo dicionario.txt\n");
             exit(1);
         }
+
+         if (origem == NULL) {
+            printf("Erro ao abrir o arquivo %s\n", name);
+            exit(1);
+        }
+
+
+        if (temp == NULL) {
+            printf("Erro ao criar o temp.txt\n");
+            exit(1);
+        }
+
 
         leitura(file, origem, temp);
         
@@ -123,7 +139,7 @@ int main() {
         remove(name);
         rename("temp.txt", name);
 
-        printf("\nDigite 1 para continuar o programa ou 0 para encerrar: ");
+        printf("\n\nDigite 1 para continuar o programa ou 0 para encerrar: ");
         scanf("%d", &z);
         getchar();  
     }

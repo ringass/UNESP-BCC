@@ -7,6 +7,8 @@ typedef struct {
     char tipo[20];
     char regiao[20];
     int geracao[20];
+    int evolucao;
+    float peso;
     int excluido;
     
 } pokemon;

@@ -1,3 +1,10 @@
+// --------------------------------------
+// ALUNOS:
+// Murilo Tomaz Gonzaga
+// Fernando Hiroshi Murosaki
+// Igor dos Reis Gomes
+// --------------------------------------
+
 #include <conio.h>
 #include <ctype.h>
 #include <math.h>
@@ -80,7 +87,7 @@ void DisplayText(int x, int y, char text[], int color)
   printf("%s", text);
 }
 
-// tela de ajuda ao apertar f1 ou selecionar no menu
+
 void descript(char *v)
 {
   int len = strlen(v);
@@ -107,6 +114,7 @@ void descript(char *v)
   }
 }
 
+// tela de ajuda ao apertar f1 ou selecionar no menu
 void HelpScreen()
 {
 
@@ -137,7 +145,16 @@ void HelpScreen()
 
     descript(linha);
 
-    DisplayText(5 + i, x, linha, 7);
+    if (i < 15)
+    {
+      DisplayText(i + 5, x, linha, 7);
+    }
+    else
+    {
+      DisplayText(i + 5, x, linha, 4);
+    }
+
+    SetColor(7);
   }
 
   int ch;
@@ -151,7 +168,7 @@ void HelpScreen()
 
   if (ch == esc)
   {
-    char space[] = "                                                                         ";
+    char space[] = "                                                                      ";
 
     for (int i = 0; i < 25; i++)
     {
@@ -268,8 +285,6 @@ int MenuLogic()
   return 13;
 }
 
-void saveChanges(FILE *arq, pokemon p);
-
 // Funcao para inserir pokemons no arquivo binario
 void insertPokemon(FILE *arq, int qt)
 {
@@ -308,30 +323,48 @@ void insertPokemon(FILE *arq, int qt)
     printf("Regiao: ");
     scanf("%s", p.regiao);
 
-    printf("Geracao: ");
-    scanf("%d", &p.geracao);
+    int ver = 0;
 
-    printf("Estagio de evolucao: ");
-    scanf("%d", &p.evolucao);
+    do
+    {
+      printf("Geracao: ");
+      ver = scanf("%d", &p.geracao);
+      if (ver != 1)
+      {
+        printf("Digite a Geracao numericamente.\n");
+        fflush(stdin);
+      }
+    } while (ver != 1);
+
+    do
+    {
+      printf("Estagio de evolucao: ");
+      ver = scanf("%d", &p.evolucao);
+      if (ver != 1)
+      {
+        printf("Digite a evolucao numericamente.\n");
+        fflush(stdin);
+      }
+    } while (ver != 1);
 
     printf("Peso (em Kg): ");
     scanf("%f", &p.peso);
 
-    p.excluido = 0; // Define o campo de exclusão como 0
+    p.excluido = 0;
 
-    // Grava cada Pokémon no arquivo
     fseek(arq, 0, SEEK_END);
     fwrite(&p, sizeof(pokemon), 1, arq);
     fflush(arq);
   }
 
-  printf("%d Pokémon(s) inserido(s) com sucesso!\n", qt);
+  printf("%d Pokemon(s) inserido(s) com sucesso!\n", qt);
 }
 
 // Funcao para consultar todos os pokemons cadastrados
 void listPokemon(FILE *arq)
 {
   pokemon p;
+  int flag = 0;
 
   rewind(arq);
 
@@ -349,16 +382,24 @@ void listPokemon(FILE *arq)
     {
       printf("| %2d  | %-10s | %-10s | %-8s   |    %1d     |    %1d     | %6.2f Kg |\n",
              p.id, p.nome, p.tipo, p.regiao, p.geracao, p.evolucao, p.peso);
+
+      flag = 1;
     }
   }
 
   printf("--------------------------------------------------------------------------------\n");
+
+  if (flag == 0)
+  {
+    system("cls");
+    printf("NENHUM POKEMON ENCONTRADO");
+  }
 }
 
 // Funcao para mudar alguma caracteristica de um determinado pokemon
 void changePokemon(FILE *arq)
 {
-  pokemon p;
+  pokemon p, x;
   char changeName[30];
   int opcao;
 
@@ -366,78 +407,85 @@ void changePokemon(FILE *arq)
 
   printf("Digite o nome do pokemon que deseja alterar: ");
   scanf("%s", changeName);
+  printf("\n");
+
+  int flag = 0;
 
   while (fread(&p, sizeof(pokemon), 1, arq) == 1)
   {
     if (strcmp(changeName, p.nome) == 0)
     {
-      printf("O que deseja alterar?\n");
-      printf("1. ID\n");
-      printf("2. Nome\n");
-      printf("3. Tipo\n");
-      printf("4. Regiao\n");
-      printf("5. Geracao\n");
-      printf("6. Estagio de evolucao\n");
-      printf("7. Peso (em Kg)\n");
+      p.excluido = 1;
+      fseek(arq, -sizeof(pokemon), SEEK_CUR);
+      fwrite(&p, sizeof(pokemon), 1, arq);
 
-      scanf("%d", &opcao);
+      x.id = p.id;
 
-      switch (opcao)
+      printf("Digite o novo nome: ");
+      scanf("%s", x.nome);
+      printf("\n");
+      printf("Digite o novo tipo: ");
+      scanf("%s", x.tipo);
+      printf("\n");
+      printf("Digite a nova regiao: ");
+      scanf("%s", x.regiao);
+      printf("\n");
+
+      int ver = 0;
+
+      do
       {
-      case 1:
-        printf("Digite o novo ID: ");
-        scanf("%d", &p.id);
-        break;
-
-      case 2:
-        printf("Digite o novo nome: ");
-        scanf("%s", p.nome);
-        break;
-
-      case 3:
-        printf("Digite o novo tipo: ");
-        scanf("%s", p.tipo);
-        break;
-
-      case 4:
-        printf("Digite a nova regiao: ");
-        scanf("%s", p.regiao);
-        break;
-
-      case 5:
         printf("Digite a nova geracao: ");
-        scanf("%d", &p.geracao);
-        break;
+        ver = scanf("%d", &x.geracao);
+        printf("\n");
 
-      case 6:
+        if (ver != 1)
+        {
+          printf("A geracao eh um campo numerico\n");
+          fflush(stdin);
+        }
+
+      }while(ver != 1);
+
+      do{
         printf("Digite o novo estagio de evolucao: ");
-        scanf("%d", &p.evolucao);
-        break;
+        ver = scanf("%d", &x.evolucao);
+        printf("\n");
+        if(ver != 1){
+          printf("O estagio de evolucao eh um campo numerico\n");
+          fflush(stdin);
+        }
 
-      case 7:
-        printf("Digite o novo peso (em Kg): ");
-        scanf("%f", &p.peso);
-        break;
+      }while(ver != 1);
+        
 
-      default:
-        printf("Escolha invalida!\n");
-      }
+      printf("Digite o novo peso (em Kg): ");
+      scanf("%f", &x.peso);
 
-      saveChanges(arq, p);
+      x.excluido = 0;
+
+      fseek(arq, 0, SEEK_END);
+
+      fwrite(&x, sizeof(x), 1, arq);
+      flag = 1;
+      break;
     }
   }
-}
 
-// Funcao para salvar as caracteristicas alteradas de um pokemon
-void saveChanges(FILE *arq, pokemon p)
-{
-  int alterar;
+  int alterar = 0;
 
-  fseek(arq, -sizeof(pokemon), SEEK_CUR);
-  fwrite(&p, sizeof(pokemon), 1, arq);
+  if (flag == 1)
+  {
 
-  printf("Deseja alterar mais alguma caracteristica desse Pokemon? (1- Sim | 2- Nao): ");
-  scanf("%d", &alterar);
+    printf("\nDeseja alterar mais algum Pokemon? (1 - SIM | 2 - NAO): ");
+    scanf("%d", &alterar);
+    printf("\n");
+  }
+  else
+  {
+    printf("Nenhum pokemon encontrado, volte ao menu e tente novamente");
+    return;
+  }
 
   if (alterar == 1)
   {
@@ -452,13 +500,13 @@ void logicalDeletePokemon(FILE *arq)
 {
   pokemon p;
   char deletedPokemon[30];
+  int flag = 0;
 
   rewind(arq);
 
   printf("Qual pokemon deseja excluir?\n");
-
-  printf("DIGITE: ");
-  scanf("%s", deletedPokemon);
+  printf("Digite o nome do pokemon: ");
+  scanf("%29s", deletedPokemon);
 
   while (fread(&p, sizeof(pokemon), 1, arq) == 1)
   {
@@ -467,18 +515,24 @@ void logicalDeletePokemon(FILE *arq)
       p.excluido = 1;
       fseek(arq, -sizeof(pokemon), SEEK_CUR);
       fwrite(&p, sizeof(pokemon), 1, arq);
+      flag = 1;
       break;
     }
   }
 
-  printf("Pokemon excluido com sucesso!\n");
+  if (flag == 1)
+  {
+    printf("Pokemon excluido com sucesso!\n");
+  }
+  else
+    printf("Pokemon nao encontrado.\n");
 }
 
-// Funcao para excluir o pokemon definitivamente (na saida do arquivo)
 void physicalDeletePokemon(FILE *arq)
 {
   pokemon p;
-  
+  int novoID = 1;
+
   FILE *temp;
   rewind(arq);
 
@@ -494,7 +548,9 @@ void physicalDeletePokemon(FILE *arq)
   {
     if (p.excluido == 0)
     {
+      p.id = novoID; // Ajusta o ID
       fwrite(&p, sizeof(pokemon), 1, temp);
+      novoID++;
     }
   }
 
@@ -506,19 +562,18 @@ void physicalDeletePokemon(FILE *arq)
     rename("temp.bin", "pokemons.bin");
   }
   else
-  {
     printf("Erro ao remover o arquivo original\n");
-  }
 }
 
 // Funcao para consultar os pokemons de uma determinada regiao
 void consulteRegionPokemon(FILE *arq)
 {
   pokemon p;
+  int flag = 0;
   char regionConsulte[20];
 
   rewind(arq);
-
+  
   printf("Digite o nome da regiao que deseja consultar os pokemons: ");
   scanf("%s", regionConsulte);
 
@@ -536,10 +591,17 @@ void consulteRegionPokemon(FILE *arq)
     {
       printf("| %2d  | %-10s | %-10s | %-8s   |    %1d     |    %1d     | %6.2f Kg |\n",
              p.id, p.nome, p.tipo, p.regiao, p.geracao, p.evolucao, p.peso);
+      flag = 1;
     }
   }
 
   printf("--------------------------------------------------------------------------------\n");
+
+  if (flag == 0)
+  {
+    system("cls");
+    printf("Nenhum pokemon encontrado, volte ao menu e tente novamente");
+  }
 }
 
 // Funcao para consultar os pokemons de uma determinada geracao
@@ -547,11 +609,18 @@ void consulteGenerationPokemon(FILE *arq)
 {
   pokemon p;
   int generationConsulte;
+  int flag = 0;
 
   rewind(arq);
 
-  printf("Digite a geracao de pokemons que deseja consultar: ");
-  scanf("%d", &generationConsulte);
+  int retry;
+
+  do
+  {
+    printf("Digite a geracao de pokemons que deseja consultar: ");
+    retry = scanf("%d", &generationConsulte);
+    fflush(stdin);
+  } while (retry != 1);
 
   system("cls");
   DisplayText(3, 30, "CONSULTA", 7);
@@ -567,24 +636,37 @@ void consulteGenerationPokemon(FILE *arq)
     {
       printf("| %2d  | %-10s | %-10s | %-8s   |    %1d     |    %1d     | %6.2f Kg |\n",
              p.id, p.nome, p.tipo, p.regiao, p.geracao, p.evolucao, p.peso);
+      flag = 1;
     }
   }
 
   printf("--------------------------------------------------------------------------------\n");
+
+  if (flag == 0)
+  {
+    system("cls");
+    printf("Nenhum pokemon encontrado, volte ao menu e tente novamente");
+  }
 }
 
 // Funcao para consultar os pokemons de um determinado estagio de evolucao
 void consulteEvolutionPokemon(FILE *arq)
 {
   pokemon p;
-  int evolutionConsulte;
+  int evolutionConsulte, flag = 0;
 
   rewind(arq);
 
-  printf("Digite o estagio de evolucao de pokemons que deseja consultar: ");
-  scanf("%d", &evolutionConsulte);
+  int retry;
 
-  if (evolutionConsulte > 3 && evolutionConsulte < 1)
+  do
+  {
+    printf("Digite o estagio de evolucao que deseja consultar: ");
+    retry = scanf("%d", &evolutionConsulte);
+    fflush(stdin);
+  } while (retry != 1);
+
+  if (evolutionConsulte > 3 || evolutionConsulte < 1)
   {
     printf("Nao constam pokemons dessa geração no nosso arquivo");
     system("cls");
@@ -605,10 +687,17 @@ void consulteEvolutionPokemon(FILE *arq)
     {
       printf("| %2d  | %-10s | %-10s | %-8s   |    %1d     |    %1d     | %6.2f Kg |\n",
              p.id, p.nome, p.tipo, p.regiao, p.geracao, p.evolucao, p.peso);
+      flag = 1;
     }
   }
 
   printf("--------------------------------------------------------------------------------\n");
+
+  if (flag == 0)
+  {
+    system("cls");
+    printf("Nenhum pokemon encontrado, volte ao menu e tente novamente");
+  }
 }
 
 // main
@@ -617,9 +706,17 @@ int main()
   SetConsoleOutputCP(CP_UTF8);
   system("cls");
 
-  resizeConsole(155, 30);
-  system("mode con: cols=150 lines=40");
+  // resizeConsole(155, 50);
 
+  int l, c;
+
+  DisplayText(2, 0, "Redimensione o CMD para que o programa funcione adequadamente", 7);
+  do
+  {
+    getConsoleSize(&c, &l);
+  } while (c < 150 && l < 55);
+
+  system("cls");
   int continuar = 1;
   int b, consultar;
   FILE *arq;
@@ -636,7 +733,6 @@ int main()
     }
   }
 
-  
   do
   {
     // Exibe o menu e recebe a opção selecionada
@@ -663,30 +759,35 @@ int main()
 
       printf("DIGITE: ");
       scanf("%d", &consultar);
+      fflush(stdin);
 
       switch (consultar)
       {
       case 1:
         consulteRegionPokemon(arq);
+        fflush(stdin);
         break;
       case 2:
         consulteGenerationPokemon(arq);
+        fflush(stdin);
         break;
       case 3:
         consulteEvolutionPokemon(arq);
+        fflush(stdin);
         break;
       case 4:
         listPokemon(arq);
+        fflush(stdin);
         break;
       }
       break;
     case 5:
-      HelpScreen(); 
+      HelpScreen();
       break;
-    case 6: 
+    case 6:
     case 13:
       system("cls");
-      printf("SAINDO DO PROGRAMA VALEUU FIO\n\n");
+      printf("OBRIGADO POR USAR\n\n");
       continuar = 0;
       break;
     case 11:
@@ -706,8 +807,7 @@ int main()
   } while (continuar);
 
   physicalDeletePokemon(arq);
-  
-  
+
   SetColor(7);
   return 0;
 }

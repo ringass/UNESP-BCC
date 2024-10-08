@@ -25,9 +25,13 @@ int main()
     printf("não existe\n");
   }
 
-  fread(&info, sizeof(info), 5, file);
+  fseek(file, 0, SEEK_END);
 
-  for (int i = 0; i < 5; i++)
+  int qt = ftell(file)/sizeof(Pessoa); 
+
+  fread(&info, sizeof(info), qt, file);
+
+  for (int i = 0; i < qt; i++)
   {
     printf("Pessoa %d:\n", i + 1);
     printf("Nome: %s\n", info[i].nome);

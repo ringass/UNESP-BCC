@@ -26,7 +26,6 @@ void Permutacao(char *str, int k){
       PermutarCaracteres(str, i, k);
     }
   }
-
 }
 
 

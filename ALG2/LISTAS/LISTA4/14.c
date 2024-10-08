@@ -13,6 +13,7 @@ int main() {
             vet[i][j] = 1;
         }
     }
+    
     int A, B;
 
     while(nul--){

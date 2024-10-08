@@ -1,0 +1,1 @@
+// Não compraria pois é mais rapido que um algoritmo O(n^2) porém ainda é pior que um algoritmo O(n logn);

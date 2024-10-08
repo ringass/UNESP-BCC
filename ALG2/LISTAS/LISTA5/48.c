@@ -17,7 +17,7 @@ double F(int n){
 
 int main() {
 
-    printf("%.2f", F(1));
+    printf("%.2f", F(2));
 
     return 0;
 }

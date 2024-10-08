@@ -26,7 +26,7 @@ int main()
     printf("não existe\n");
   }
   
-  fread(&info, sizeof(info), 5, file);
+  fread(info, sizeof(info), 5, file);
   fclose(file);
 
   for (int i = 0; i < 5; i++)

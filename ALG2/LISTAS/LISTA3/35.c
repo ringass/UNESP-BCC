@@ -84,7 +84,7 @@ void porNome(contatos *agenda, int qt) {
     if(!achou){
     printf("Contato nao encontrado.\n");
     }else{
-    sleep(1000);
+    return;
     }
 }
 

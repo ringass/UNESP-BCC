@@ -16,11 +16,16 @@ typedef struct
 void receber(fichas *paciente, int *qt)
 {
     fichas new;
-    int len, cadastro;
+    int len, cadastro, retry;
 
-    printf("Quantos pacientes deseja inserir: ");
-    scanf("%d", &len);
-    getchar();
+    do
+    {
+        printf("Quantos pacientes deseja inserir: ");
+        retry = scanf("%d", &len);
+        getchar();
+        fflush(stdin);
+        printf("\n");
+    } while (retry != 1);
 
     for (int i = 0; i < len; i++)
     {
@@ -90,7 +95,7 @@ void chamarPaciente(fichas *pacientes, int *qt)
         printf("Nenhum paciente na fila.\n");
         return;
     }
-    
+
     printf("Chamando paciente: %s (Estado: %s)\n", pacientes[0].nome, pacientes[0].estado_c);
 
     for (int i = 1; i < *qt; i++)
@@ -100,32 +105,30 @@ void chamarPaciente(fichas *pacientes, int *qt)
     (*qt)--;
 }
 
-// void Consultar(fichas *pacientes, int *qt)
-// {
-//     for (int i = 0; i < *qt; i++)
-//     {
-//         printf("Chamando paciente: %s (Estado: %s)\n", pacientes[i].nome, pacientes[i].estado_c);
-//     }
-//     printf("\n\n\n\n\n");
-// }
-
 int main()
 {
-    int qt = 0, r = 1;
+    int qt = 0, a = 1;
     fichas pacientes[MAX];
-    
-    while(r){
-    receber(pacientes, &qt);
 
-    //Consultar(pacientes, &qt);
+    while (a != 0)
+    {   
+        receber(pacientes, &qt);
 
-    while (qt > 0)
-    {
-        chamarPaciente(pacientes, &qt);
+        if (qt != 0)
+        {
+            printf("--------------------------------------\n");
+            while (qt > 0)
+            {
+                chamarPaciente(pacientes, &qt);
+            }
+            printf("--------------------------------------\n");
+        }
+
+        printf("\n");
+
+        printf("clientes na fila? (1 - sim/0 - nao): ");
+        scanf("%d", &a);
+        printf("\n");
     }
-    
-    printf("1 - continuar / 0 - parar: ");
-    scanf("%d", &r);
-}
     return 0;
 }

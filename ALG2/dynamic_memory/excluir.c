@@ -103,7 +103,9 @@ int exclui_final(no *lista)
     {
         return 0;
     }else if((*lista)->pLink == NULL){
+      free(*lista);
       *lista = NULL;
+      return 0;
     }
     else
     {
@@ -116,6 +118,14 @@ int exclui_final(no *lista)
 
       p->pLink = NULL;
       free(q);
+    }
+}
+
+void exclui_tudo(no *lista){
+    while(*lista != NULL){
+        no p = *lista;
+        *lista = (*lista)->pLink;
+        free(p);
     }
 }
 
@@ -163,10 +173,11 @@ int main()
 
     mostra_lista(lista);
 
-
     printf("\n\n");
 
     exclui_final(&lista);
 
+    printf("Excluindo ultimo elemento");
     mostra_lista(lista);
+
 }

@@ -88,6 +88,63 @@ void mostra_lista(no lista)
     }
 }
 
+void inclui_ordenadamente(no *lista, int num){
+    no p = (no)malloc(sizeof(struct reg));
+
+    p->info = num;
+
+    if(*lista == NULL || num <= (*lista)->info){
+        p->pLink = *lista;
+        *lista = p;
+    }else{
+        no q = *lista, r;
+
+        while(q!= NULL && q->info < num){
+            r = q;
+            q = q->pLink;
+        }
+
+        p->pLink = q;
+        r->pLink = p;
+    }
+}
+
+int excluir_elemento(no *lista, int num){
+
+    if(*lista == NULL || num < (*lista)->info){
+        return 0;
+
+    }else if(num == (*lista)->info){
+
+        no q = *lista;
+        *lista = (*lista)->pLink;
+        free(q);
+
+        return 1;
+
+    }else{
+
+        no q = *lista;
+        no r = *lista;
+
+        while (q->pLink != NULL && q->info < num)
+        {
+            r = q;
+            q = q->pLink; 
+        }
+
+
+        if(q->pLink == NULL || q->info != num){
+            return 0;
+        }
+
+        r->pLink = q->pLink;
+        free(q);
+        return 1;
+    }
+}
+
+
 int main()
 {
     int continua = 1, x;
@@ -99,7 +156,7 @@ int main()
 
         scanf("%d", &x);
 
-        inclui_final(&lista, x);
+        inclui_ordenadamente(&lista, x);
 
         printf("Deseja continuar inserindo a lista? ");
         scanf("%d", &continua);
@@ -114,4 +171,15 @@ int main()
     printf("\n\n");
 
     mostra_lista(lista);
+
+    int valor;
+
+    printf("\n");
+    scanf("%d", &valor);
+
+    excluir_elemento(&lista, valor);
+
+    while(excluir_elemento(&lista, valor));
+
+    mostra_lista(lista);  
 }

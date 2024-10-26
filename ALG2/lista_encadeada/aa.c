@@ -1,107 +1,111 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
-#include <math.h>
+
 
 typedef struct Paciente *no;
 
-struct Paciente
-{
+struct Paciente {
     char nome[32];
     char estado_c[24];
+    int idade;
     struct Paciente *pLink;
 };
 
 
-void AdicionarPaciente(no *fila, char* nome, char* estado){
+int prioridadeEstado(const char *estado) {
+    if (strcmp(estado, "pessimo") == 0) return 3;
+    if (strcmp(estado, "ruim") == 0) return 2;
+    if (strcmp(estado, "regular") == 0) return 1;
+    return 0;
+}
 
+
+void AdicionarPaciente(no *fila, char *nome, char *estado, int idade) {
     no New = (no)malloc(sizeof(struct Paciente));
-    no atual, anterior;
-
     strcpy(New->nome, nome);
     strcpy(New->estado_c, estado);
+    New->idade = idade;
     New->pLink = NULL;
 
-    if(*fila == NULL){
+    if (*fila == NULL) {
         *fila = New;
         return;
     }
 
-    atual = *fila;
-    anterior = NULL;
-     
-     char *compare;
+    no atual = *fila;
+    no anterior = NULL;
 
-     strcpy(compare, estado);
+    int prioridadeNovo = prioridadeEstado(estado);
 
-     strlwr(compare); 
+    
+    while (atual != NULL) {
+        char copia[20];
 
-     while (atual != NULL && 
-           ((strcmp(compare, "pessimo") < 0 && strcmp(atual->estado_c, "pessimo") != 0) ||
-            (strcmp(compare, "ruim") < 0 && strcmp(atual->estado_c, "ruim") == 0))) {
-        anterior = atual;
-        atual = atual->pLink;
+        strcpy(copia, atual->estado_c);
+
+        strlwr(copia);
+
+        int prioridadeAtual = prioridadeEstado(copia);
+
+        if (prioridadeAtual > prioridadeNovo ||
+            (prioridadeAtual == prioridadeNovo && atual->idade >= idade)) {
+            anterior = atual;
+            atual = atual->pLink;
+        } else {
+            break;
+        }
     }
 
-    if(anterior == NULL){
+    if (anterior == NULL) {
         New->pLink = *fila;
         *fila = New;
-    }else{
+    } else {
         New->pLink = atual;
         anterior->pLink = New;
     }
-
 }
 
-
-void MostraFila(no fila)
-{
-
+void MostraFila(no fila) {
     no p = fila;
 
     printf("\nFILA\n");
 
-    if(fila == NULL){
-        printf("Nao ha pessoas na fila");
+    if (fila == NULL) {
+        printf("Nao ha pessoas na fila\n");
+        return;
     }
 
-    while (p != NULL)
-    {
-        printf("Paciente: %s  ||  Estado: %s", p->nome, p->estado_c);
+    while (p != NULL) {
+        printf("Paciente: %s  ||  Estado: %s  ||  Idade: %d\n", 
+               p->nome, strlwr(p->estado_c), p->idade);
         p = p->pLink;
     }
 }
 
-int AtenderPaciente(no *lista){
 
-  system("cls");
-  
-  no q;
+int AtenderPaciente(no *lista) {
+    if (*lista == NULL) {
+        printf("Nao ha pacientes para atender.\n");
+        return 0;
+    }
 
-  if(!*lista){
-    return 0;
-  }
-  
-  printf("Paciente atendido: %s", (*lista)->nome);
+    no q = *lista;
+    printf("\nPaciente atendido: %s\n", q->nome);
 
-  q = *lista;
-
-  *lista = (*lista)->pLink;
-  free(q);
-  return 1;
+    *lista = q->pLink;
+    free(q);
+    return 1;
 }
 
-
-int main()
-{
+int main() {
     int e;
     no fila = NULL;
 
-    char newNome[100], newEstado[10];
+    char newNome[32], newEstado[24];
+    int idade;
 
-    do
-    {
+    do {
         printf("\nMENU\n");
         printf("[1] - Adicionar Paciente\n");
         printf("[2] - Atender o proximo paciente\n");
@@ -110,55 +114,55 @@ int main()
         printf("DIGITE: ");
         scanf("%d", &e);
 
-        switch (e)
-        {
-        case 1:
-        {
-            int qt;
+        switch (e) {
+            case 1: {
+                int qt;
+                printf("\nQuantos pacientes deseja inserir: ");
+                scanf("%d", &qt);
+                getchar(); 
 
-            printf("\nQuantos pacientes deseja inserir: ");
-            scanf("%d", &qt);
-            getchar();
-            while (qt--)
-            {
+                while (qt--) {
+                    system("cls");
+                    printf("\nNome do paciente: ");
+                    fgets(newNome, sizeof(newNome), stdin);
+                    newNome[strcspn(newNome, "\n")] = '\0'; 
+                    
+                    printf("Estado do paciente (regular, ruim, péssimo): ");
+                    fgets(newEstado, sizeof(newEstado), stdin);
+                    newEstado[strcspn(newEstado, "\n")] = '\0'; 
 
-                printf("\nNome do paciente: ");
-                gets(newNome);
-                printf("Estado do paciente: ");
-                gets(newEstado);
-                fflush(stdin);
+                    printf("Idade do paciente: ");
+                    scanf("%d", &idade);
+                    getchar(); 
 
-                AdicionarPaciente(&fila, newNome, newEstado);
+                    AdicionarPaciente(&fila, newNome, newEstado, idade);
+                }
+
+                break;
             }
-
-            system("cls");
-            break;
+            case 2: {
+                system("cls");
+                AtenderPaciente(&fila);
+                break;
+            }
+            case 3: {
+                system("cls");
+                MostraFila(fila);
+                break;
+            }
+            case 0: {
+                system("cls");
+                printf("Fechando Hospital!\n");
+                break;
+            }
+            default: {
+                printf("Valor invalido\n");
+            }
         }
-        case 2:
-        {
-            AtenderPaciente(&fila);
-            break;
-        }
-        case 3:
-        {
-            MostraFila(fila);
-            break;
-        }
-        case 0:
-        {
-            printf("Fechando Hospital!\n");
-            break;
-        }
-        default:
-        {
-            printf("Valor invalido");
-        }
-        }
-
     } while (e != 0);
 
-    while (fila != NULL)
-    {
+    
+    while (fila != NULL) {
         AtenderPaciente(&fila);
     }
 

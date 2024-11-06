@@ -99,7 +99,7 @@ void inclui_ordenadamente(no *lista, int num){
     }else{
         no q = *lista, r;
 
-        while(q!= NULL && q->info < num){
+        while(q != NULL && q->info < num){
             r = q;
             q = q->pLink;
         }

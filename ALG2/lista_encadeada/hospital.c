@@ -13,7 +13,7 @@ struct Paciente {
 };
 
 
-int prioridadeEstado(const char *estado) {
+int prioridade(const char *estado) {
     if (strcmp(estado, "pessimo") == 0) return 3;
     if (strcmp(estado, "ruim") == 0) return 2;
     if (strcmp(estado, "regular") == 0) return 1;
@@ -36,7 +36,7 @@ void AdicionarPaciente(no *fila, char *nome, char *estado, int idade) {
     no atual = *fila;
     no anterior = NULL;
 
-    int prioridadeNovo = prioridadeEstado(estado);
+    int prioridadeNovo = prioridade(estado);
 
     
     while (atual != NULL) {
@@ -46,7 +46,7 @@ void AdicionarPaciente(no *fila, char *nome, char *estado, int idade) {
 
         strlwr(copia);
 
-        int prioridadeAtual = prioridadeEstado(copia);
+        int prioridadeAtual = prioridade(copia);
 
         if (prioridadeAtual > prioridadeNovo ||
             (prioridadeAtual == prioridadeNovo && atual->idade >= idade)) {
@@ -127,7 +127,7 @@ int main() {
                     fgets(newNome, sizeof(newNome), stdin);
                     newNome[strcspn(newNome, "\n")] = '\0'; 
                     
-                    printf("Estado do paciente (regular, ruim, péssimo): ");
+                    printf("Estado do paciente (regular, ruim, pessimo): ");
                     fgets(newEstado, sizeof(newEstado), stdin);
                     newEstado[strcspn(newEstado, "\n")] = '\0'; 
 

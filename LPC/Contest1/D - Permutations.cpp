@@ -2,50 +2,68 @@
 
 using namespace std;
 
-int main(void)
+int main()
 {
+
     int n;
 
     cin >> n;
 
-    if (n == 1)
+    if (n <= 3 && n > 1)
     {
-        cout << n << endl;
-        exit(0);
-    }
-
-    if (n <= 3)
-    {
-        cout << "NO SOLUTION" << endl;
+        cout << "NO SOLUTION\n";
         return 0;
     }
 
-    int j;
+    int i = 2;
 
-    if(n % 2 != 0){
-        j = n - 1;
-    }else{
-        j = n;
-    }
-    
-    
-    for (int i = j; i >= 2; i -= 2)
+    while (i <= n)
     {
         cout << i << " ";
+        i += 2;
     }
 
-    if (n % 2 != 0)
-    {
-        cout << n << " ";
-    }
+    i = 1;
 
-    for (int i = j - 1; i > 0; i -= 2)
+    while (i <= n)
     {
         cout << i << " ";
+        i += 2;
     }
 
     cout << endl;
-
-
-    return 0;
 }
+
+
+// #include <iostream>
+
+// using namespace std;
+
+// int main(void)
+// {
+//     int n;
+//     string odd;
+//     cin >> n;
+
+//     if (n <= 3 && n > 1)
+//     {
+//         cout << "NO SOLUTION" << endl;
+//         return 0;
+//     }
+
+//     for(int i = 1; i <= n; i++){
+//         if(i % 2 == 0){
+
+//             cout << i << " ";
+
+//         }else{
+
+//             odd += to_string(i) + " ";
+
+//         }
+//     }
+
+//     cout << odd << "\n";
+
+//     return 0;
+// }

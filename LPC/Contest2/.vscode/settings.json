@@ -2,6 +2,8 @@
     "files.associations": {
         "iostream": "cpp",
         "ostream": "cpp",
-        "iosfwd": "cpp"
+        "deque": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp"
     }
 }

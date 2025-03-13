@@ -22,15 +22,15 @@ int main()
 
     while (n--)
     {
-        cin >> str; // Correção na leitura da string
+        cin >> str;
 
         switch (str[0])
         {
-        case 'r': // Reverse
+        case 'r':
             rev = !rev;
             break;
 
-        case 'p': // Push back (ou push front, dependendo de 'rev')
+        case 'p':
             cin >> x;
             if (rev)
             {
@@ -42,7 +42,8 @@ int main()
             }
             break;
 
-        case 't': // Push front (ou push back, dependendo de 'rev')
+        case 't':
+
             cin >> x;
             if (rev)
             {
@@ -54,7 +55,7 @@ int main()
             }
             break;
 
-        case 'f': // Pop front (ou back, dependendo de 'rev')
+        case 'f':
             if (!vazio(fila))
             {
                 if (rev)
@@ -70,9 +71,9 @@ int main()
             }
             break;
 
-        case 'b': // Pop back (ou front, dependendo de 'rev')
+        case 'b':
             if (!vazio(fila))
-            { // Corrigido para chamar a função corretamente
+            {
                 if (rev)
                 {
                     cout << fila.front() << endl;

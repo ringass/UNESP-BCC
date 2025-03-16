@@ -9,7 +9,6 @@ int main() {
     cin >> n;
 
     vector<pair<int, int>> arr(n);
-    
     for (int i = 0; i < n; i++) {
         cin >> arr[i].first >> arr[i].second;
     }
@@ -38,13 +37,13 @@ int main() {
         } else {
             
             if (tC >= time_count) {
-                
                 direcao_atual = new_direcao;
                 time_count = tC + 10;
             } else {
-                
+                // A pessoa espera até que a escada rolante pare e então entra
                 time_count = time_count + 10;
                 direcao_atual = new_direcao;
+                time_count = max(time_count, tC) + 10;
             }
         }
     }

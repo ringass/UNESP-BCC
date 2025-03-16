@@ -1,52 +1,46 @@
 #include <bits/stdc++.h>
 
-
 using namespace std;
 
-
-bool palin(string str){
-    int left = 0, right = str.length() - 1;
-
-    while(left < right){
-
-        if(str[left] != str[right]){
-            return false;
-        }
-
-        right--;
-        left--;
-    }
-
-    return true;
-}
-
-
-int main(){
-    
-    int n, len;
-
+int main()
+{
+    int n;
     cin >> n;
 
-    while(--n){
-
+    while (n--)
+    {
+        int len;
         cin >> len;
 
         string str;
-
         cin >> str;
 
-        stack<int> pilha;
+        string temp;
+        int conjuntos = 0, usados = 0;
 
+        for (int i = 0; i < len; i++)
+        {
+            temp += str[i];
 
+            if (temp == "))" || temp == "((" || temp == "()")
+            {
+                conjuntos++;
+                usados += temp.length();
+                temp.clear();
+            }
+            else if (temp.length() > 1)
+            {
+                if (temp[i] == ')')
+                {
+                    conjuntos++;
+                    usados += temp.length();
+                    temp.clear();
+                }
+            }
+        }
 
-
-
-
-
-
+        cout << conjuntos << " " << len - usados<< endl;
     }
 
-
-
-
+    return 0;
 }

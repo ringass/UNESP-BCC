@@ -1,71 +1,117 @@
 #include <iostream>
 #include <queue>
-#include <string>
+#include <cstring>
 
 using namespace std;
 
-int main(){
-
+int main()
+{
     queue<string> norte; //-3
-    queue<string> sul;  //-2
+    queue<string> sul;   //-2
     queue<string> leste; //-4
     queue<string> oeste; //-1
 
     int n;
-    string str, temp;
+    char str[10], temp[10] = "";
+    int count = 0;
+    while (true)
+    {
+        cin >> str;
 
+        // Corrige a comparação usando strcmp()
+        if (strcmp(str, "-1") == 0 || strcmp(str, "-2") == 0 || strcmp(str, "-3") == 0 || strcmp(str, "-4") == 0)
+        {
+            strcpy(temp, str);
+        }
 
-    while(true){
+        if (strcmp(str, "0") == 0)
+        {
+            break;
+        }
 
-    cin >> str;
-
-    if(str == "-1" || str == "-2" || str == "-3" || str == "-4" ){
-        temp == str;
+        if (strcmp(str, "-1") != 0 && strcmp(str, "-2") != 0 && strcmp(str, "-3") != 0 && strcmp(str, "-4") != 0)
+        {
+            if (strcmp(temp, "-1") == 0)
+            {
+                oeste.push(string(str));
+                count++;
+            }
+            else if (strcmp(temp, "-2") == 0)
+            {
+                sul.push(string(str));
+                count++;
+            }
+            else if (strcmp(temp, "-3") == 0)
+            {
+                norte.push(string(str));
+                count++;
+            }
+            else if (strcmp(temp, "-4") == 0)
+            {
+                leste.push(string(str));
+                count++;
+            }
+        }
     }
 
-    if(n == 0){
-        break;
-    }
-
-    if(n == -1){
-        oeste.push(str);
-    }else if(n == -2){
-        sul.push(str);
-    }else if(n == -3){
-        norte.push(str);
-    }else if(n == -4){
-        leste.push(str);
-    }
-
-    }
-
-
-    while(!(leste.empty()) && !(oeste.empty()) && !sul.empty() || !norte.empty() ){
-
-        if(!oeste.empty()){
-            cout << oeste.front() << " ";
+    while (!(leste.empty()) || !(oeste.empty()) || !sul.empty() || !norte.empty())
+    {
+        if (!oeste.empty())
+        {
+            if (count != 1)
+            {
+                cout << oeste.front() << " ";
+            }
+            else
+            {
+                cout << oeste.front();
+            }
             oeste.pop();
+            count--;
         }
 
-
-        if(!norte.empty()){
-            cout << norte.front() << " ";
+        if (!norte.empty())
+        {
+            if (count != 1)
+            {
+                cout << norte.front() << " ";
+            }
+            else
+            {
+                cout << norte.front();
+            }
             norte.pop();
+            count--;
         }
 
-        if(!sul.empty()){
-            cout << sul.front() << " ";
+        if (!sul.empty())
+        {
+            if (count != 1)
+            {
+                cout << sul.front() << " ";
+            }
+            else
+            {
+                cout << sul.front();
+            }
             sul.pop();
+            count--;
         }
 
-        
-        if(!leste.empty()){
-            cout << leste.front() << " ";
+        if (!leste.empty())
+        {
+            if (count != 1)
+            {
+                cout << leste.front() << " ";
+            }
+            else
+            {
+                cout << leste.front();
+            }
             leste.pop();
+            count--;
         }
-
     }
-    
-    cout << endl;
-    
+
+    cout << "\n";
 }

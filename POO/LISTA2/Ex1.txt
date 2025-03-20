@@ -1,0 +1,15 @@
+O que é uma classe? Como se define uma classe em Java? De um exemplo. Compare com “struct” em Linguagem C.
+
+Uma classe é um conceito que utilizamos e estamos aprendendo, da POO que tem como objetivo criar uma modelo para objetos onde podemos armazenar variaveis e metodos que podem ser utilizados por aqueles objetos ali inseridos.
+
+A principal diferenca entre uma classe e structs em C é o fato de que structs em C só tem a capacidade de armazenar dados e não é possivel criar metodos para serem utilizados ali dentro.
+
+Exemplo de classe em Java:
+
+public class Mesa{
+    String cor;
+
+    public Mesa(String cor){
+        this.cor = cor;
+    }
+}

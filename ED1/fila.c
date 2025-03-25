@@ -1,53 +1,83 @@
 #include <stdio.h>
 #include <stdlib.h>
-typedef struct reg *no;
 
-struct reg{
+typedef struct reg *No;
+
+struct reg
+{
     int info;
-    struct reg *link;
+    struct reg *pLink;
 };
 
-typedef struct{
-    no ini;
-    no fim;
-}queue;
+typedef struct
+{
+    No inicio;
+    No fim;
+} Fila;
 
-void cria(queue *fila){
-    fila->ini = NULL;
-    fila->fim = NULL;
+void inicializaFila(Fila *f)
+{
+    f->inicio = f->fim = NULL;
 }
 
-void Enqueue(queue *fila, int p){
-    no q;
+void enqueue(Fila *f, int valor)
+{
+    No novo = (No)malloc(sizeof(struct reg));
+    novo->info = valor;
+    novo->pLink = NULL;
 
-    q = (no)malloc(sizeof(struct reg));
-
-    q->info = p;
-    q->link = NULL;
-
-    if(fila->ini == NULL){
-        fila->ini = q;
-    }else{
-        fila->fim->link = q;
+    if (f->fim == NULL)
+    {
+        f->inicio = f->fim = novo;
     }
-    
-    fila->fim = p;
+    else
+    {
+        f->fim->pLink = novo;
+        f->fim = novo;
+    }
 }
 
-void Dequeue
+int dequeue(Fila *f)
+{
+    if (f->inicio == NULL)
+    {
+        printf("Fila vazia!\n");
+        return -1;
+    }
+    No temp = f->inicio;
+    int valor = temp->info;
+    f->inicio = temp->pLink;
 
+    if (f->inicio == NULL)
+    {
+        f->fim = NULL;
+    }
 
-int main(){
+    free(temp);
+    return valor;
+}
 
-    queue fila;
-    cria(&fila);
+int front(Fila *f)
+{
+    if (f->inicio == NULL)
+    {
+        printf("Fila vazia!\n");
+        return -1;
+    }
+    return f->inicio->info;
+}
 
+int main()
+{
 
+    Fila f;
+    inicializaFila(&f);
 
+    enqueue(&f, 10);
+    enqueue(&f, 20);
+    enqueue(&f, 30);
 
-
-    
-    int x;
-
-
+    printf("Front: %d\n", front(&f));     
+    printf("Dequeue: %d\n", dequeue(&f)); 
+    printf("Front: %d\n", front(&f));     
 }

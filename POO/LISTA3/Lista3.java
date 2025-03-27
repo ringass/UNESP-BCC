@@ -45,13 +45,14 @@ class Entregador extends Usuario {
 
 class Restaurante extends Usuario {
     String nomeRestaurante;
-    List<String> cardapio[];
+    Map<String, Double> cardapio;
 
     Restaurante(String nome, String email, int id, String nomeRestaurante) {
         this.nome = nome;
         this.email = email;
         this.id = id;
         this.nomeRestaurante = nomeRestaurante;
+        this.cardapio = new HashMap<>();
     }
 }
 
@@ -147,19 +148,22 @@ class SistemaDelivery {
     }
 
     public void ShowRestaurantes(){
-
         for(Restaurante r : restaurantes){
-            ShowRestaurantes(r);
+            System.out.println(r.nomeRestaurante);
         }
-
     }
 
-    public void CriarPedido() {
+    public void ShowCardapio(){
+        for(Restaurante r : restaurantes){
+            System.out.println(r.cardapio<);
+        }
+    }
+
+    public void CriarPedido(Scanner sc) {
         System.out.println("FORMULARIO PARA REALIZAR PEDIDO");
         System.out.println("Selecione um Restaurante:");
-        
-        
-        
+        ShowRestaurantes();
+
     }
 
     public void verificarDisponibilidade() {
@@ -193,6 +197,9 @@ public class Lista3 {
 
         boolean e = true;
         int escolha;
+
+        SistemaDelivery ss = new SistemaDelivery();
+
         while (e) {
             System.out.println("----- MENU -----\n");
             System.out.println("[1] - Cadastrar Cliente\n");
@@ -217,22 +224,16 @@ public class Lista3 {
             switch (escolha) {
 
                 case (1): {
-
+                    ss.Cadastrar(1, sc);
                 }
                 case (2): {
-                    System.out.println("== CADASTRO DE RESTAURANTE ==");
-                    System.out.println("Digite o nome do proprietario: ");
-                    String newName = sc.nextLine();
-                    System.out.println("Digite o nome do restaurante: ");
-                    String newName2 = sc.nextLine();
-                    System.out.println("Digite o email do restaurante: ");
-                    String newEmail = sc.nextLine();
+                    ss.Cadastrar(2, sc);
                 }
                 case (3): {
-
+                    ss.Cadastrar(3, sc);
                 }
-                case (4): {
-
+                case (4): { 
+                    
                 }
                 case (5): {
 

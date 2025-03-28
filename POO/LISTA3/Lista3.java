@@ -47,22 +47,29 @@ class Restaurante extends Usuario {
     String nomeRestaurante;
     Map<String, Double> cardapio;
 
-    Restaurante(String nome, String email, int id, String nomeRestaurante) {
+    Restaurante(String nome, String email, int id, String nomeRestaurante, Map<String, Double> cardapio) {
         this.nome = nome;
         this.email = email;
         this.id = id;
         this.nomeRestaurante = nomeRestaurante;
-        this.cardapio = new HashMap<>();
+        this.cardapio = cardapio;
     }
 }
 
 class Pedido {
 
-    Cliente cliente = new Cliente();
-    Restaurante restaurante = new Restaurante();
-    Entregador entregador = new Entregador();
+    Cliente cliente;
+    Restaurante restaurante;
+    Entregador entregador;
     public double valor;
-    List<String> itens = new ArrayList<String>();
+    Map<String, Double> itens;
+
+    Pedido(Cliente cliente, Restaurante restaurante, Map<String, Double> itens, int valor) {
+        this.cliente = cliente;
+        this.restaurante = restaurante;
+        this.itens = itens;
+        this.valor = 0.0;
+    }
 
     enum Status {
         REALIZADO, EM_PREPARO, ENTREGUE;
@@ -113,6 +120,7 @@ class SistemaDelivery {
             clientes.add(newCliente);
 
         } else if (x == 2) {
+            Map<String, Double> menu = new HashMap<>();
 
             int newId = restaurantes.size() + 1;
 
@@ -124,7 +132,22 @@ class SistemaDelivery {
             System.out.println("Digite o email do restaurante: ");
             String newEmail = sc.nextLine();
 
-            Restaurante newRestaurante = new Restaurante(newName, newEmail, newId, newName2);
+            System.out.println("== Insira o Cardápio ==");
+
+            System.out.println("Quantos itens serao adicionados ao cardapio?");
+            int qt = sc.nextInt();
+
+            for (int i = 1; i <= qt; i++) {
+                sc.nextLine();
+                System.out.format("Item[%d] - Nome: ", i);
+                String item = sc.nextLine();
+                System.out.format("Item[%d] - Preco: ", i);
+                double preco = sc.nextDouble();
+
+                menu.put(item, preco);
+            }
+
+            Restaurante newRestaurante = new Restaurante(newName, newEmail, newId, newName2, menu);
 
             restaurantes.add(newRestaurante);
 
@@ -147,40 +170,103 @@ class SistemaDelivery {
 
     }
 
-    public void ShowRestaurantes(){
-        for(Restaurante r : restaurantes){
-            System.out.println(r.nomeRestaurante);
-        }
-    }
+    public void ShowCardapio() {
+        System.out.println("CARDÁPIO:");
 
-    public void ShowCardapio(){
-        for(Restaurante r : restaurantes){
-            System.out.println(r.cardapio<);
+        for (int i = 0; i < restaurantes.size(); i++) {
+            Restaurante r = restaurantes.get(i);
+            System.out.printf("\nRestaurante[%d]: %s", i + 1, r.nomeRestaurante);
+
+            if (r.cardapio.isEmpty()) {
+                System.out.println("  Nenhum item cadastrado.");
+            } else {
+                int itemIndex = 1;
+                for (Map.Entry<String, Double> entry : r.cardapio.entrySet()) {
+                    System.out.printf("  Item [%d]: %s = R$ %.2f\n", itemIndex, entry.getKey(), entry.getValue());
+                    itemIndex++;
+                }
+            }
         }
     }
 
     public void CriarPedido(Scanner sc) {
-        System.out.println("FORMULARIO PARA REALIZAR PEDIDO");
-        System.out.println("Selecione um Restaurante:");
-        ShowRestaurantes();
 
+        System.out.println("\n== FORMULÁRIO PARA REALIZAR PEDIDO ==");
+
+        if (clientes.isEmpty()) {
+            System.out.println("Nenhum cliente cadastrado.");
+            return;
+        }
+
+        if (restaurantes.isEmpty()) {
+            System.out.println("Nenhum restaurante cadastrado.");
+            return;
+        }
+
+        boolean encontrado = false;
+        int tt = 3, cc;
+
+        while (!encontrado || tt > 1) {
+            System.out.println("Selecione o cliente pelo email:");
+            String tempMail = sc.nextLine();
+
+            for (cc = 0; cc < clientes.size(); cc++) {
+                if (clientes.get(cc).email.equals(tempMail)) {
+                    System.out.println("Cliente encontrado!");
+                    encontrado = true;
+                    break;
+                }
+            }
+
+            if (!encontrado) {
+                System.out.println("Cliente não encontrado!");
+                System.out.printf("TENTE NOVAMENTE - %d CHANCES\n", tt);
+            }
+        }
+
+
+        ShowCardapio();
+
+        System.out.println("Selecione um Restaurante pelo numero:");
+        int res = sc.nextInt();
+
+        // while (true) {
+        // System.out.println("Selecione um item do caradapio: ");
+        // int x = sc.nextInt();
+
+        // }
+
+        Pedido newPedido = new Pedido(clientes.get(cc), restaurantes.get(res), /* */, /* */);
     }
 
-    public void verificarDisponibilidade() {
+    public boolean verificarDisponibilidade() {
+
+        for (Entregador e : entregadores) {
+
+            if (e.status == false) {
+                return false;
+            } else {
+                return true;
+            }
+
+        }
+
+        return false;
 
     }
 
     public void pedidos(int x, Scanner sc) {
-        if(x == 1){
+
+        if (x == 1) {
             System.out.println("Qual o ID do pedido?");
             int id = sc.nextInt();
 
             pedidos.get(id).resumoDoPedido();
-        }else{
-            
+        } else {
+
             System.out.println("LISTA DOS PEDIDOS: ");
 
-            for(int i = 0; i < pedidos.size(); i++){
+            for (int i = 0; i < pedidos.size(); i++) {
                 System.out.printf("Pedido %d", i);
                 pedidos.get(i).resumoDoPedido();
             }
@@ -232,8 +318,8 @@ public class Lista3 {
                 case (3): {
                     ss.Cadastrar(3, sc);
                 }
-                case (4): { 
-                    
+                case (4): {
+
                 }
                 case (5): {
 

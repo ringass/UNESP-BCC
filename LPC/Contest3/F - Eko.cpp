@@ -51,7 +51,7 @@ int main()
 
     while(esq <= dir){
         ll meio = (esq+dir)/2;
-        cout << meio << endl;
+        
 
         if(verifica(arv, m, meio, n)){
             ans = meio;
@@ -64,6 +64,4 @@ int main()
 
     cout << ans << '\n';
     
-
-    // binary search
 }

@@ -2,7 +2,7 @@
 import java.io.IOException;
 import java.util.*;
 
-class Clear{
+class Clear {
     public static void clrscr() {
         // limpa
         try {
@@ -84,8 +84,21 @@ class Pedido {
         this.valor = valor;
     }
 
-    enum Status {
-        REALIZADO, EM_PREPARO, ENTREGUE;
+    public enum Status {
+        REALIZADO("Realizado"),
+        EM_PREPARO("Em preparo"),
+        ENTREGUE("Entregue");
+
+        private String descricao;
+
+        Status(String descricao) {
+            this.descricao = descricao;
+        }
+
+        @Override
+        public String toString() {
+            return descricao;
+        }
     };
 
     Status status = Status.EM_PREPARO;
@@ -213,7 +226,7 @@ class SistemaDelivery {
                 System.out.println("Nenhum item cadastrado.");
             } else {
                 int itemIndex = 1;
-                for (Map.Entry<String, Double> entry : restaurantes.get(p-1).cardapio.entrySet()) {
+                for (Map.Entry<String, Double> entry : restaurantes.get(p - 1).cardapio.entrySet()) {
                     System.out.printf("Item [%d]: %s = R$ %.2f\n", itemIndex, entry.getKey(), entry.getValue());
                     itemIndex++;
                 }
@@ -271,7 +284,6 @@ class SistemaDelivery {
         double valorTotal = 0;
         boolean continuarPedido = true;
 
-
         while (continuarPedido) {
             System.out.println("Digite o numero do item do cardapio para adicionar ao pedido:");
             int numItem = sc.nextInt();
@@ -312,7 +324,7 @@ class SistemaDelivery {
         Clear.clrscr();
         System.out.println("Pedido criado com sucesso!");
         novoPedido.resumoDoPedido();
-        
+
     }
 
     public Entregador verificarDisponibilidade() {
@@ -335,14 +347,15 @@ class SistemaDelivery {
         }
     }
 
-    public void pedidos(int x, Scanner sc) {
-        
+    public void Listarpedidos(int x, Scanner sc) {
+
         Clear.clrscr();
         if (x == 1) {
             System.out.println("Qual o ID do pedido?");
             int id = sc.nextInt();
 
             pedidos.get(id).resumoDoPedido();
+
         } else {
 
             System.out.println("LISTA DOS PEDIDOS: ");
@@ -352,6 +365,45 @@ class SistemaDelivery {
                 pedidos.get(i).resumoDoPedido();
             }
         }
+    }
+
+    public void AtualizarPedido(Scanner sc) {
+        System.out.println("Qual o ID do pedido?");
+        int id = sc.nextInt();
+
+        if (id < 0 || id >= pedidos.size()) {
+            System.out.println("ID de pedido inválido.");
+            return;
+        }
+
+        sc.nextLine();
+
+        Pedido pedidoSelecionado = pedidos.get(id);
+
+        System.out.println("Deseja atualizar o status para qual estado?");
+        System.out.println("Opções de estados = [REALIZADO, EM_PREPARO, ENTREGUE]: ");
+        String res = sc.nextLine().toUpperCase();
+
+        try {
+
+            Pedido.Status novoStatus = Pedido.Status.valueOf(res);
+
+            pedidoSelecionado.atualizarStatus(novoStatus);
+
+            System.out.println("Status do pedido atualizado para: " + novoStatus);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Status não reconhecido. Use uma das opções válidas.");
+        }
+    }
+
+    public boolean verifyAll() {
+        if (pedidos.isEmpty() || restaurantes.isEmpty() || clientes.isEmpty() || clientes.isEmpty()) {
+            System.out.println("Erro por falta de informações (Restaurantes, Pessoas ou pedidos)");
+            System.out.println(
+                    "Certifique-se que existe ao menos um cliente, um restaurante e um entregador cadastrados, ou pedidos, no sistema");
+            return false;
+        }
+        return true;
     }
 
 }
@@ -390,34 +442,50 @@ public class Lista3 {
 
             switch (escolha) {
 
-                case (1): { //cadastrar cliente
+                case (1): { // cadastrar cliente
                     ss.Cadastrar(1, sc);
                     break;
                 }
-                case (2): { //cadastrar restaurante
+                case (2): { // cadastrar restaurante
                     ss.Cadastrar(2, sc);
                     break;
                 }
-                case (3): { //cadastrar entregador
+                case (3): { // cadastrar entregador
                     ss.Cadastrar(3, sc);
                     break;
                 }
-                case (4): { //criar pedido
+                case (4): { // criar pedido
+
+                    if (!ss.verifyAll()) {
+                        break;
+                    }
                     ss.CriarPedido(sc);
                     break;
                 }
-                case (5): {//atribuir pedido a entregador
+                case (5): {// atribuir pedido a entregador
+                    if (!ss.verifyAll()) {
+                        break;
+                    }
                     ss.atribuirPedido();
                     break;
                 }
-                case (6): {//atualizar status do pedido
-
+                case (6): {// atualizar status do pedido
+                    if (!ss.verifyAll()) {
+                        break;
+                    }
+                    ss.AtualizarPedido(sc);
+                    break;
                 }
-                case (7): {//listar pedidos
-
+                case (7): {// listar pedidos
+                    if (!ss.verifyAll()) {
+                        break;
+                    }
+                    System.out.println("\nDigite [1] para listar apenas um e [2] para listar todos");
+                    ss.Listarpedidos(escolha, sc);
+                    break;
                 }
                 case (8): {
-                    clrscr();
+                    Clear.clrscr();
                     System.out.println("SESSAO FINALIZADA!!");
                     e = false;
                 }

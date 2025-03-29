@@ -2,6 +2,19 @@
 import java.io.IOException;
 import java.util.*;
 
+class Clear{
+    public static void clrscr() {
+        // limpa
+        try {
+            if (System.getProperty("os.name").contains("Windows"))
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            else
+                Runtime.getRuntime().exec("clear");
+        } catch (IOException | InterruptedException ex) {
+        }
+    }
+}
+
 abstract class Usuario {
 
     public String nome, email;
@@ -64,11 +77,11 @@ class Pedido {
     public double valor;
     Map<String, Double> itens;
 
-    Pedido(Cliente cliente, Restaurante restaurante, Map<String, Double> itens, int valor) {
+    Pedido(Cliente cliente, Restaurante restaurante, Map<String, Double> itens, double valor) {
         this.cliente = cliente;
         this.restaurante = restaurante;
         this.itens = itens;
-        this.valor = 0.0;
+        this.valor = valor;
     }
 
     enum Status {
@@ -88,9 +101,12 @@ class Pedido {
     public void resumoDoPedido() {
         System.out.printf("Nome: %s" +
                 "Restaurante: %s", cliente.nome, restaurante.nomeRestaurante);
-        for (String p : itens) {
-            System.out.println(p);
+
+        System.out.println("Itens do Pedido:");
+        for (Map.Entry<String, Double> entry : itens.entrySet()) {
+            System.out.printf("- %s: R$ %.2f\n", entry.getKey(), entry.getValue());
         }
+
         System.out.println("Entregador: " + entregador.nome);
         System.out.println("Valor do Pedido: " + valor);
         System.out.println("Status: " + status);
@@ -132,7 +148,7 @@ class SistemaDelivery {
             System.out.println("Digite o email do restaurante: ");
             String newEmail = sc.nextLine();
 
-            System.out.println("== Insira o Cardápio ==");
+            System.out.println("== Insira o Cardapio ==");
 
             System.out.println("Quantos itens serao adicionados ao cardapio?");
             int qt = sc.nextInt();
@@ -168,95 +184,160 @@ class SistemaDelivery {
             entregadores.add(newEntregador);
         }
 
+        Clear.clrscr();
     }
 
-    public void ShowCardapio() {
-        System.out.println("CARDÁPIO:");
+    public void ShowRestaurantes(int p) {
+        if (p == 0) {
+            System.out.println("LISTA DE RESTAURANTES");
 
-        for (int i = 0; i < restaurantes.size(); i++) {
-            Restaurante r = restaurantes.get(i);
-            System.out.printf("\nRestaurante[%d]: %s", i + 1, r.nomeRestaurante);
+            for (int i = 0; i < restaurantes.size(); i++) {
+                Restaurante r = restaurantes.get(i);
+                System.out.printf("\nRestaurante[%d]: %s\n\n", i + 1, r.nomeRestaurante);
 
-            if (r.cardapio.isEmpty()) {
-                System.out.println("  Nenhum item cadastrado.");
+                if (r.cardapio.isEmpty()) {
+                    System.out.println("Nenhum item cadastrado.\n");
+                } else {
+                    int itemIndex = 1;
+                    for (Map.Entry<String, Double> entry : r.cardapio.entrySet()) {
+                        System.out.printf("  Item [%d]: %s = R$ %.2f\n", itemIndex, entry.getKey(), entry.getValue());
+                        itemIndex++;
+                    }
+                }
+            }
+        } else {
+
+            System.out.println("CARDAPIO");
+
+            if (restaurantes.get(p - 1).cardapio.isEmpty()) {
+                System.out.println("Nenhum item cadastrado.");
             } else {
                 int itemIndex = 1;
-                for (Map.Entry<String, Double> entry : r.cardapio.entrySet()) {
-                    System.out.printf("  Item [%d]: %s = R$ %.2f\n", itemIndex, entry.getKey(), entry.getValue());
+                for (Map.Entry<String, Double> entry : restaurantes.get(p-1).cardapio.entrySet()) {
+                    System.out.printf("Item [%d]: %s = R$ %.2f\n", itemIndex, entry.getKey(), entry.getValue());
                     itemIndex++;
                 }
             }
         }
+
     }
 
     public void CriarPedido(Scanner sc) {
-
-        System.out.println("\n== FORMULÁRIO PARA REALIZAR PEDIDO ==");
+        System.out.println("\n== FORMULARIO PARA REALIZAR PEDIDO ==");
 
         if (clientes.isEmpty()) {
-            System.out.println("Nenhum cliente cadastrado.");
+            System.out.println("Nenhum cliente cadastrado.\n");
             return;
         }
 
         if (restaurantes.isEmpty()) {
-            System.out.println("Nenhum restaurante cadastrado.");
+            System.out.println("Nenhum restaurante cadastrado.\n");
             return;
         }
 
-        boolean encontrado = false;
-        int tt = 3, cc;
-
-        while (!encontrado || tt > 1) {
-            System.out.println("Selecione o cliente pelo email:");
-            String tempMail = sc.nextLine();
-
-            for (cc = 0; cc < clientes.size(); cc++) {
-                if (clientes.get(cc).email.equals(tempMail)) {
-                    System.out.println("Cliente encontrado!");
-                    encontrado = true;
+        // Seleção do Cliente
+        Cliente clienteSelecionado = null;
+        while (clienteSelecionado == null) {
+            System.out.println("Digite o e-mail do cliente:");
+            String emailCliente = sc.nextLine();
+            for (Cliente c : clientes) {
+                if (c.email.equals(emailCliente)) {
+                    clienteSelecionado = c;
                     break;
                 }
             }
+            if (clienteSelecionado == null) {
+                System.out.println("Cliente nao encontrado. Tente novamente.");
+            }
 
-            if (!encontrado) {
-                System.out.println("Cliente não encontrado!");
-                System.out.printf("TENTE NOVAMENTE - %d CHANCES\n", tt);
+        }
+
+        // Seleção do Restaurante
+        ShowRestaurantes(0);
+        System.out.println("\nDigite o numero do restaurante:");
+        int numRestaurante = sc.nextInt();
+        sc.nextLine();
+
+        if (numRestaurante < 1 || numRestaurante > restaurantes.size()) {
+            System.out.println("Restaurante invalido.");
+            return;
+        }
+
+        Clear.clrscr();
+        Restaurante restauranteSelecionado = restaurantes.get(numRestaurante - 1);
+        ShowRestaurantes(numRestaurante);
+
+        Map<String, Double> itensSelecionados = new HashMap<>();
+        double valorTotal = 0;
+        boolean continuarPedido = true;
+
+
+        while (continuarPedido) {
+            System.out.println("Digite o numero do item do cardapio para adicionar ao pedido:");
+            int numItem = sc.nextInt();
+            sc.nextLine();
+
+            List<String> listaItens = new ArrayList<>(restauranteSelecionado.cardapio.keySet());
+            if (numItem < 1 || numItem > listaItens.size()) {
+                System.out.println("Item inválido.");
+                continue;
+            }
+
+            String itemSelecionado = listaItens.get(numItem - 1);
+            double precoItem = restauranteSelecionado.cardapio.get(itemSelecionado);
+            itensSelecionados.put(itemSelecionado, precoItem);
+            valorTotal += precoItem;
+
+            System.out.println("Deseja adicionar mais itens? (s/n)");
+            String resposta = sc.nextLine();
+            if (resposta.equalsIgnoreCase("n")) {
+                continuarPedido = false;
             }
         }
 
+        Entregador teste = verificarDisponibilidade();
 
-        ShowCardapio();
+        if (teste.status == false || teste == null) {
+            System.out.println("Nenhum entregador disponivel no momento. O pedido sera criado sem entregador.");
+        }
 
-        System.out.println("Selecione um Restaurante pelo numero:");
-        int res = sc.nextInt();
+        Pedido novoPedido = new Pedido(clienteSelecionado, restauranteSelecionado, itensSelecionados, valorTotal);
 
-        // while (true) {
-        // System.out.println("Selecione um item do caradapio: ");
-        // int x = sc.nextInt();
+        if (teste != null) {
+            novoPedido.atribuirEntregador(teste);
+        }
 
-        // }
+        pedidos.add(novoPedido);
 
-        Pedido newPedido = new Pedido(clientes.get(cc), restaurantes.get(res), /* */, /* */);
+        Clear.clrscr();
+        System.out.println("Pedido criado com sucesso!");
+        novoPedido.resumoDoPedido();
+        
     }
 
-    public boolean verificarDisponibilidade() {
-
+    public Entregador verificarDisponibilidade() {
         for (Entregador e : entregadores) {
-
-            if (e.status == false) {
-                return false;
-            } else {
-                return true;
-            }
-
+            if (!e.status)
+                e.status = true;
+            return e;
         }
+        return null;
+    }
 
-        return false;
-
+    public void atribuirPedido() {
+        for (Pedido p : pedidos) {
+            if (p.entregador == null) {
+                Entregador entregadorDisponivel = verificarDisponibilidade();
+                if (entregadorDisponivel != null) {
+                    p.atribuirEntregador(entregadorDisponivel);
+                }
+            }
+        }
     }
 
     public void pedidos(int x, Scanner sc) {
-
+        
+        Clear.clrscr();
         if (x == 1) {
             System.out.println("Qual o ID do pedido?");
             int id = sc.nextInt();
@@ -309,25 +390,30 @@ public class Lista3 {
 
             switch (escolha) {
 
-                case (1): {
+                case (1): { //cadastrar cliente
                     ss.Cadastrar(1, sc);
+                    break;
                 }
-                case (2): {
+                case (2): { //cadastrar restaurante
                     ss.Cadastrar(2, sc);
+                    break;
                 }
-                case (3): {
+                case (3): { //cadastrar entregador
                     ss.Cadastrar(3, sc);
+                    break;
                 }
-                case (4): {
+                case (4): { //criar pedido
+                    ss.CriarPedido(sc);
+                    break;
+                }
+                case (5): {//atribuir pedido a entregador
+                    ss.atribuirPedido();
+                    break;
+                }
+                case (6): {//atualizar status do pedido
 
                 }
-                case (5): {
-
-                }
-                case (6): {
-
-                }
-                case (7): {
+                case (7): {//listar pedidos
 
                 }
                 case (8): {
@@ -342,14 +428,4 @@ public class Lista3 {
         sc.close();
     }
 
-    public static void clrscr() {
-        // Clears Screen in java
-        try {
-            if (System.getProperty("os.name").contains("Windows"))
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            else
-                Runtime.getRuntime().exec("clear");
-        } catch (IOException | InterruptedException ex) {
-        }
-    }
 }

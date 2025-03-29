@@ -124,6 +124,7 @@ class Pedido {
         System.out.println("Valor do Pedido: " + valor);
         System.out.println("Status: " + status);
     }
+
 }
 
 class SistemaDelivery {
@@ -137,9 +138,9 @@ class SistemaDelivery {
 
         if (x == 1) {
             System.out.println("== CADASTRO DE CLIENTE ==");
-            System.out.println("Digite o nome completo: ");
+            System.out.printf("Digite o nome completo: ");
             String newName = sc.nextLine();
-            System.out.println("Digite o email: ");
+            System.out.printf("Digite o email: ");
             String newEmail = sc.nextLine();
 
             int newId = clientes.size() + 1;
@@ -154,16 +155,16 @@ class SistemaDelivery {
             int newId = restaurantes.size() + 1;
 
             System.out.println("== CADASTRO DE RESTAURANTE ==");
-            System.out.println("Digite o nome do proprietario: ");
+            System.out.printf("Digite o nome do proprietario: ");
             String newName = sc.nextLine();
-            System.out.println("Digite o nome do restaurante: ");
+            System.out.printf("Digite o nome do restaurante: ");
             String newName2 = sc.nextLine();
-            System.out.println("Digite o email do restaurante: ");
+            System.out.printf("Digite o email do restaurante: ");
             String newEmail = sc.nextLine();
 
             System.out.println("== Insira o Cardapio ==");
 
-            System.out.println("Quantos itens serao adicionados ao cardapio?");
+            System.out.printf("Quantos itens serao adicionados ao cardapio?: ");
             int qt = sc.nextInt();
 
             for (int i = 1; i <= qt; i++) {
@@ -185,11 +186,11 @@ class SistemaDelivery {
             int newId = entregadores.size() + 1;
 
             System.out.println("== CADASTRO DE ENTREGADOR ==");
-            System.out.println("Digite o nome completo: ");
+            System.out.printf("Digite o nome completo: ");
             String newName = sc.nextLine();
-            System.out.println("Digite o email: ");
+            System.out.printf("Digite o email: ");
             String newEmail = sc.nextLine();
-            System.out.println("Digite o meio de transporte(Carro, Moto, Bicicleta): ");
+            System.out.printf("Digite o meio de transporte(Carro, Moto, Bicicleta): ");
             String newMeio = sc.nextLine();
 
             Entregador newEntregador = new Entregador(newName, newEmail, newId, false, newMeio);
@@ -291,7 +292,7 @@ class SistemaDelivery {
 
             List<String> listaItens = new ArrayList<>(restauranteSelecionado.cardapio.keySet());
             if (numItem < 1 || numItem > listaItens.size()) {
-                System.out.println("Item inválido.");
+                System.out.println("Item invalido.");
                 continue;
             }
 
@@ -372,7 +373,7 @@ class SistemaDelivery {
         int id = sc.nextInt();
 
         if (id < 0 || id >= pedidos.size()) {
-            System.out.println("ID de pedido inválido.");
+            System.out.println("ID de pedido invalido.");
             return;
         }
 
@@ -392,20 +393,54 @@ class SistemaDelivery {
 
             System.out.println("Status do pedido atualizado para: " + novoStatus);
         } catch (IllegalArgumentException e) {
-            System.out.println("Status não reconhecido. Use uma das opções válidas.");
+            System.out.println("Status nao reconhecido. Use uma das opçoes validas.");
         }
     }
 
     public boolean verifyAll() {
-        if (pedidos.isEmpty() || restaurantes.isEmpty() || clientes.isEmpty() || clientes.isEmpty()) {
-            System.out.println("Erro por falta de informações (Restaurantes, Pessoas ou pedidos)");
+        if (entregadores.isEmpty() || restaurantes.isEmpty() || clientes.isEmpty()) {
+            System.out.println("Erro por falta de informacoes (Restaurantes, Pessoas ou pedidos)");
             System.out.println(
                     "Certifique-se que existe ao menos um cliente, um restaurante e um entregador cadastrados, ou pedidos, no sistema");
+            try {
+
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            Clear.clrscr();
+            return false;
+        }
+        Clear.clrscr();
+        return true;
+    }
+
+    public boolean verifyPedido() {
+        if (pedidos.isEmpty()) {
+            System.out.println("ERROR: FALTA DE PEDIDOS");
+
+            try {
+
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            Clear.clrscr();
+            return false;
+
+        }
+        Clear.clrscr();
+        return true;
+    }
+
+    public boolean verifyEntregador() {
+        if (entregadores.isEmpty()) {
+            System.out.println("ERROR: FALTA DE ENTREGADORES");
             return false;
         }
         return true;
     }
-
 }
 
 public class Lista3 {
@@ -440,6 +475,7 @@ public class Lista3 {
 
             sc.nextLine();
 
+            Clear.clrscr();
             switch (escolha) {
 
                 case (1): { // cadastrar cliente
@@ -463,21 +499,23 @@ public class Lista3 {
                     break;
                 }
                 case (5): {// atribuir pedido a entregador
-                    if (!ss.verifyAll()) {
+                    if (!ss.verifyPedido()) {
+                        break;
+                    } else if (!ss.verifyEntregador()) {
                         break;
                     }
                     ss.atribuirPedido();
                     break;
                 }
                 case (6): {// atualizar status do pedido
-                    if (!ss.verifyAll()) {
+                    if (!ss.verifyPedido()) {
                         break;
                     }
                     ss.AtualizarPedido(sc);
                     break;
                 }
                 case (7): {// listar pedidos
-                    if (!ss.verifyAll()) {
+                    if (!ss.verifyPedido()) {
                         break;
                     }
                     System.out.println("\nDigite [1] para listar apenas um e [2] para listar todos");

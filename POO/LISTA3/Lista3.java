@@ -1,4 +1,4 @@
-
+import java.io.*;
 import java.io.IOException;
 import java.util.*;
 
@@ -112,8 +112,8 @@ class Pedido {
     }
 
     public void resumoDoPedido() {
-        System.out.printf("Nome: %s" +
-                "Restaurante: %s", cliente.nome, restaurante.nomeRestaurante);
+        System.out.printf("Nome: %s\n" +
+                "Restaurante: %s\n", cliente.nome, restaurante.nomeRestaurante);
 
         System.out.println("Itens do Pedido:");
         for (Map.Entry<String, Double> entry : itens.entrySet()) {
@@ -123,8 +123,8 @@ class Pedido {
         System.out.println("Entregador: " + entregador.nome);
         System.out.println("Valor do Pedido: " + valor);
         System.out.println("Status: " + status);
+        System.out.println("\n");
     }
-
 }
 
 class SistemaDelivery {
@@ -343,9 +343,14 @@ class SistemaDelivery {
                 Entregador entregadorDisponivel = verificarDisponibilidade();
                 if (entregadorDisponivel != null) {
                     p.atribuirEntregador(entregadorDisponivel);
+                    System.out.printf("Entregador %s atribuido ao pedido do cliente %s\n", entregadorDisponivel.nome,
+                            p.cliente);
+                    return;
                 }
             }
         }
+
+        System.out.println("Todos os pedidos com entregadores");
     }
 
     public void Listarpedidos(int x, Scanner sc) {
@@ -362,7 +367,7 @@ class SistemaDelivery {
             System.out.println("LISTA DOS PEDIDOS: ");
 
             for (int i = 0; i < pedidos.size(); i++) {
-                System.out.printf("Pedido %d", i);
+                System.out.printf("Pedido %d\n", i + 1);
                 pedidos.get(i).resumoDoPedido();
             }
         }
@@ -403,8 +408,7 @@ class SistemaDelivery {
             System.out.println(
                     "Certifique-se que existe ao menos um cliente, um restaurante e um entregador cadastrados, ou pedidos, no sistema");
             try {
-
-                Thread.sleep(6000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -421,14 +425,12 @@ class SistemaDelivery {
 
             try {
 
-                Thread.sleep(6000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-
             Clear.clrscr();
             return false;
-
         }
         Clear.clrscr();
         return true;
@@ -499,9 +501,9 @@ public class Lista3 {
                     break;
                 }
                 case (5): {// atribuir pedido a entregador
-                    if (!ss.verifyPedido()) {
+                    if (!ss.verifyEntregador()) {
                         break;
-                    } else if (!ss.verifyEntregador()) {
+                    } else if (!ss.verifyPedido()) {
                         break;
                     }
                     ss.atribuirPedido();
@@ -519,7 +521,8 @@ public class Lista3 {
                         break;
                     }
                     System.out.println("\nDigite [1] para listar apenas um e [2] para listar todos");
-                    ss.Listarpedidos(escolha, sc);
+                    int zz = sc.nextInt();
+                    ss.Listarpedidos(zz, sc);
                     break;
                 }
                 case (8): {

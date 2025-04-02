@@ -76,12 +76,14 @@ class Pedido {
     Entregador entregador;
     public double valor;
     Map<String, Double> itens;
+    int id;
 
-    Pedido(Cliente cliente, Restaurante restaurante, Map<String, Double> itens, double valor) {
+    Pedido(Cliente cliente, Restaurante restaurante, Map<String, Double> itens, double valor, int id) {
         this.cliente = cliente;
         this.restaurante = restaurante;
         this.itens = itens;
         this.valor = valor;
+        this.id = id;
     }
 
     public enum Status {
@@ -115,7 +117,7 @@ class Pedido {
         System.out.printf("Nome: %s\n" +
                 "Restaurante: %s\n", cliente.nome, restaurante.nomeRestaurante);
 
-        System.out.println("Itens do Pedido:");
+        System.out.printf("Itens do Pedido[%d]:\n", id);
         for (Map.Entry<String, Double> entry : itens.entrySet()) {
             System.out.printf("- %s: R$ %.2f\n", entry.getKey(), entry.getValue());
         }
@@ -313,8 +315,8 @@ class SistemaDelivery {
         if (teste.status == false || teste == null) {
             System.out.println("Nenhum entregador disponivel no momento. O pedido sera criado sem entregador.");
         }
-
-        Pedido novoPedido = new Pedido(clienteSelecionado, restauranteSelecionado, itensSelecionados, valorTotal);
+        int id = pedidos.size() + 1;
+        Pedido novoPedido = new Pedido(clienteSelecionado, restauranteSelecionado, itensSelecionados, valorTotal, id);
 
         if (teste != null) {
             novoPedido.atribuirEntregador(teste);
@@ -360,7 +362,7 @@ class SistemaDelivery {
             System.out.println("Qual o ID do pedido?");
             int id = sc.nextInt();
 
-            pedidos.get(id).resumoDoPedido();
+            pedidos.get(id-1).resumoDoPedido();
 
         } else {
 
@@ -384,7 +386,7 @@ class SistemaDelivery {
 
         sc.nextLine();
 
-        Pedido pedidoSelecionado = pedidos.get(id);
+        Pedido pedidoSelecionado = pedidos.get(id-1);
 
         System.out.println("Deseja atualizar o status para qual estado?");
         System.out.println("Opções de estados = [REALIZADO, EM_PREPARO, ENTREGUE]: ");

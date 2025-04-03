@@ -75,7 +75,8 @@ class Pedido {
     Restaurante restaurante;
     Entregador entregador;
     public double valor;
-    Map<String, Double> itens;
+    Map<String, Double> itens; // classe para itens ou vector de map;
+
     int id;
 
     Pedido(Cliente cliente, Restaurante restaurante, Map<String, Double> itens, double valor, int id) {
@@ -123,7 +124,7 @@ class Pedido {
         }
 
         System.out.println("Entregador: " + entregador.nome);
-        System.out.println("Valor do Pedido: " + valor);
+        System.out.printf("Valor do Pedido: R$ %.2f", valor);
         System.out.println("Status: " + status);
         System.out.println("\n");
     }
@@ -347,22 +348,42 @@ class SistemaDelivery {
                     p.atribuirEntregador(entregadorDisponivel);
                     System.out.printf("Entregador %s atribuido ao pedido do cliente %s\n", entregadorDisponivel.nome,
                             p.cliente);
+                    try {
+
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    Clear.clrscr();
+
                     return;
                 }
             }
         }
 
         System.out.println("Todos os pedidos com entregadores");
+        try {
+
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        Clear.clrscr();
     }
 
     public void Listarpedidos(int x, Scanner sc) {
+
+        int p;
 
         Clear.clrscr();
         if (x == 1) {
             System.out.println("Qual o ID do pedido?");
             int id = sc.nextInt();
 
-            pedidos.get(id-1).resumoDoPedido();
+            pedidos.get(id - 1).resumoDoPedido();
+
+            System.out.println("DIGITE PARA CONTINUAR (1):");
+            p = sc.nextInt();
 
         } else {
 
@@ -372,6 +393,13 @@ class SistemaDelivery {
                 System.out.printf("Pedido %d\n", i + 1);
                 pedidos.get(i).resumoDoPedido();
             }
+
+            System.out.println("DIGITE PARA CONTINUAR (1):");
+            p = sc.nextInt();
+        }
+
+        if (p == 1) {
+            return;
         }
     }
 
@@ -381,12 +409,13 @@ class SistemaDelivery {
 
         if (id < 0 || id >= pedidos.size()) {
             System.out.println("ID de pedido invalido.");
+
             return;
         }
 
         sc.nextLine();
 
-        Pedido pedidoSelecionado = pedidos.get(id-1);
+        Pedido pedidoSelecionado = pedidos.get(id - 1);
 
         System.out.println("Deseja atualizar o status para qual estado?");
         System.out.println("Opções de estados = [REALIZADO, EM_PREPARO, ENTREGUE]: ");
@@ -399,6 +428,12 @@ class SistemaDelivery {
             pedidoSelecionado.atualizarStatus(novoStatus);
 
             System.out.println("Status do pedido atualizado para: " + novoStatus);
+
+            if (res.equalsIgnoreCase("REALIZADO")) {
+                pedidos.get(id - 1).entregador.status = true;
+                System.out.println("Entregador disponivel: " + pedidos.get(id - 1).entregador.nome);
+            }
+
         } catch (IllegalArgumentException e) {
             System.out.println("Status nao reconhecido. Use uma das opçoes validas.");
         }
@@ -408,9 +443,11 @@ class SistemaDelivery {
         if (entregadores.isEmpty() || restaurantes.isEmpty() || clientes.isEmpty()) {
             System.out.println("Erro por falta de informacoes (Restaurantes, Pessoas ou pedidos)");
             System.out.println(
-                    "Certifique-se que existe ao menos um cliente, um restaurante e um entregador cadastrados, ou pedidos, no sistema");
+                    "Certifique-se que existe ao menos um cliente, um restaurante e um entregador cadastrados, ou pedidos, no sistema\n"
+                            + //
+                            "Aguarde para retornar ao menu");
             try {
-                Thread.sleep(2000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -423,11 +460,11 @@ class SistemaDelivery {
 
     public boolean verifyPedido() {
         if (pedidos.isEmpty()) {
-            System.out.println("ERROR: FALTA DE PEDIDOS");
+            System.out.println("ERROR: FALTA DE PEDIDOS\nAguarde para retornar ao menu");
 
             try {
 
-                Thread.sleep(2000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -440,9 +477,18 @@ class SistemaDelivery {
 
     public boolean verifyEntregador() {
         if (entregadores.isEmpty()) {
-            System.out.println("ERROR: FALTA DE ENTREGADORES");
+            System.out.println("ERROR: FALTA DE ENTREGADORES\n" + //
+                    "Aguarde para retornar ao menu");
+            try {
+
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            Clear.clrscr();
             return false;
         }
+        Clear.clrscr();
         return true;
     }
 }
@@ -450,6 +496,7 @@ class SistemaDelivery {
 public class Lista3 {
 
     public static void main(String args[]) {
+        Clear.clrscr();
 
         Scanner sc = new Scanner(System.in);
 

@@ -404,6 +404,7 @@ class SistemaDelivery {
     }
 
     public void AtualizarPedido(Scanner sc) {
+
         System.out.println("Qual o ID do pedido?");
         int id = sc.nextInt();
 
@@ -417,8 +418,25 @@ class SistemaDelivery {
 
         Pedido pedidoSelecionado = pedidos.get(id - 1);
 
+        System.out.println("Digite seu email para confirmar:");
+        String ss = sc.nextLine();
+
+        if (!(ss.equalsIgnoreCase(pedidoSelecionado.cliente.email))) {
+            System.out.println("Email em incorreto, volte ao menu e tente novamente");
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            Clear.clrscr();
+
+            return;
+        }
+
+        sc.nextLine();
         System.out.println("Deseja atualizar o status para qual estado?");
-        System.out.println("Opções de estados = [REALIZADO, EM_PREPARO, ENTREGUE]: ");
+        System.out.println("Opcoes de estados = [REALIZADO, EM_PREPARO, ENTREGUE]: ");
         String res = sc.nextLine().toUpperCase();
 
         try {
@@ -437,6 +455,13 @@ class SistemaDelivery {
         } catch (IllegalArgumentException e) {
             System.out.println("Status nao reconhecido. Use uma das opçoes validas.");
         }
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        Clear.clrscr();
     }
 
     public boolean verifyAll() {

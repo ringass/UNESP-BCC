@@ -25,6 +25,47 @@ class Clear {
     }
 }
 
+class Input {
+
+    public static double DoubleReceive(String mensagem, Scanner sc) {
+        double valor = 0.0;
+        boolean valido = false;
+
+        while (!valido) {
+            System.out.print(mensagem);
+            String entrada = sc.nextLine();
+
+            try {
+                valor = Double.parseDouble(entrada);
+                valido = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Digite um numero com ponto decimal (ex: 10.5).");
+            }
+        }
+
+        return valor;
+    }
+
+    public static int IntReceive(String mensagem, Scanner sc) {
+        int valor = 0;
+        boolean valido = false;
+
+        while (!valido) {
+            System.out.print(mensagem);
+            String entrada = sc.nextLine();
+
+            try {
+                valor = Integer.parseInt(entrada);
+                valido = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada invalida. Digite um numero inteiro.");
+            }
+        }
+        return valor;
+
+    }
+}
+
 abstract class Usuario {
 
     public String nome, email;
@@ -125,7 +166,7 @@ class Pedido {
 
         private String descricao;
 
-        public String getDescricao(){
+        public String getDescricao() {
             return descricao;
         }
 
@@ -203,15 +244,12 @@ class SistemaDelivery {
 
             System.out.println("== Insira o Cardapio ==");
 
-            System.out.printf("Quantos itens serao adicionados ao cardapio?: ");
-            int qt = sc.nextInt();
+            int qt = Input.IntReceive("Quantos itens serao adicionados ao cardapio?: ", sc);
 
             for (int i = 1; i <= qt; i++) {
-                sc.nextLine();
                 System.out.format("Item[%d] - Nome: ", i);
                 String item = sc.nextLine();
-                System.out.format("Item[%d] - Preco: ", i);
-                double preco = sc.nextDouble();
+                double preco = Input.DoubleReceive(String.format("Item[%d] - Preco: ", i), sc);
 
                 menu.put(item, preco);
             }
@@ -229,6 +267,7 @@ class SistemaDelivery {
             String newName = sc.nextLine();
             System.out.printf("Digite o email: ");
             String newEmail = sc.nextLine();
+
             System.out.printf("Digite o meio de transporte(Carro, Moto, Bicicleta): ");
             String newMeio = sc.nextLine();
 
@@ -253,7 +292,8 @@ class SistemaDelivery {
                 } else {
                     int itemIndex = 1;
                     for (Map.Entry<String, Double> entry : r.cardapio.entrySet()) {
-                        System.out.printf("  Item [%d]: %s = R$ %.2f\n", itemIndex, entry.getKey(), entry.getValue());
+                        System.out.printf("  Item [%d]: %s = R$ %.2f\n", itemIndex, entry.getKey(),
+                                entry.getValue());
                         itemIndex++;
                     }
                 }
@@ -294,7 +334,7 @@ class SistemaDelivery {
             System.out.println("Digite o e-mail do cliente:");
             String emailCliente = sc.nextLine();
             for (Cliente c : clientes) {
-                if (c.email.equals(emailCliente)) {
+                if (c.email.equalsIgnoreCase(emailCliente)) {
                     clienteSelecionado = c;
                     break;
                 }
@@ -307,9 +347,7 @@ class SistemaDelivery {
 
         // Seleção do Restaurante
         ShowRestaurantes(0);
-        System.out.println("\nDigite o numero do restaurante:");
-        int numRestaurante = sc.nextInt();
-        sc.nextLine();
+        int numRestaurante = Input.IntReceive("\nDigite o numero do restaurante: ", sc);
 
         if (numRestaurante < 1 || numRestaurante > restaurantes.size()) {
             System.out.println("Restaurante invalido.");
@@ -327,9 +365,8 @@ class SistemaDelivery {
         boolean continuarPedido = true;
 
         while (continuarPedido) {
-            System.out.println("Digite o numero do item do cardapio para adicionar ao pedido:");
-            int numItem = sc.nextInt();
-            sc.nextLine();
+            System.out.println();
+            int numItem = Input.IntReceive("Digite o numero do item do cardapio para adicionar ao pedido:\n", sc);
 
             List<String> listaItens = new ArrayList<>(restauranteSelecionado.cardapio.keySet());
             if (numItem < 1 || numItem > listaItens.size()) {
@@ -340,9 +377,8 @@ class SistemaDelivery {
             String itemSelecionado = listaItens.get(numItem - 1);
             double precoItem = restauranteSelecionado.cardapio.get(itemSelecionado);
 
-            System.out.println("Quantas unidades de " + itemSelecionado + " você deseja?");
-            int quantidade = sc.nextInt();
-            sc.nextLine();
+            int quantidade = Input.IntReceive(String.format("Quantas unidades de " + itemSelecionado + " voce deseja?\n"),
+                    sc);
 
             boolean itemExistente = false;
             for (Item item : itensSelecionados) {
@@ -374,7 +410,8 @@ class SistemaDelivery {
         }
         int id = pedidos.size() + 1;
 
-        Pedido novoPedido = new Pedido(clienteSelecionado, restauranteSelecionado, itensSelecionados, valorTotal, id);
+        Pedido novoPedido = new Pedido(clienteSelecionado, restauranteSelecionado, itensSelecionados, valorTotal,
+                id);
 
         if (teste != null) {
             novoPedido.atribuirEntregador(teste);
@@ -403,7 +440,8 @@ class SistemaDelivery {
                 Entregador entregadorDisponivel = verificarDisponibilidade();
                 if (entregadorDisponivel != null) {
                     p.atribuirEntregador(entregadorDisponivel);
-                    System.out.printf("Entregador %s atribuido ao pedido do cliente %s\n", entregadorDisponivel.nome,
+                    System.out.printf("Entregador %s atribuido ao pedido do cliente %s\n",
+                            entregadorDisponivel.nome,
                             p.cliente);
                     Clear.waitkk();
                     return;
@@ -421,13 +459,11 @@ class SistemaDelivery {
 
         Clear.clrscr();
         if (x == 1) {
-            System.out.println("Qual o ID do pedido?");
-            int id = sc.nextInt();
+            int id = Input.IntReceive("Qual o ID do pedido?\n", sc);
 
             pedidos.get(id - 1).resumoDoPedido();
 
-            System.out.println("DIGITE PARA CONTINUAR (1):");
-            p = sc.nextInt();
+            p = Input.IntReceive("DIGITE PARA CONTINUAR (1): ", sc);
 
         } else {
 
@@ -438,8 +474,7 @@ class SistemaDelivery {
                 pedidos.get(i).resumoDoPedido();
             }
 
-            System.out.println("DIGITE PARA CONTINUAR (1):");
-            p = sc.nextInt();
+            p = Input.IntReceive("DIGITE PARA CONTINUAR (1): ", sc);
         }
 
         if (p == 1) {
@@ -449,8 +484,7 @@ class SistemaDelivery {
 
     public void AtualizarPedido(Scanner sc) {
 
-        System.out.println("Qual o ID do pedido?");
-        int id = sc.nextInt();
+        int id = Input.IntReceive("Qual o ID do pedido?\n", sc);
 
         if (id <= 0 || id > pedidos.size()) {
             System.out.println("ID de pedido invalido.");
@@ -458,28 +492,25 @@ class SistemaDelivery {
             return;
         }
 
-        sc.nextLine();
-
         Pedido pedidoSelecionado = pedidos.get(id - 1);
 
         System.out.println("Digite seu email para confirmar:");
         String ss = sc.nextLine();
 
         if (!(ss.equalsIgnoreCase(pedidoSelecionado.cliente.email))) {
-            System.out.println("Email em incorreto, volte ao menu e tente novamente");
+            System.out.println("Email incorreto, volte ao menu e tente novamente");
 
             Clear.waitkk();
 
             return;
         }
 
-        if(pedidoSelecionado.status.getDescricao().equalsIgnoreCase("Realizado")){
-            System.out.println("Esse pedido já foi realizado");
+        if (pedidoSelecionado.status.getDescricao().equalsIgnoreCase("Realizado")) {
+            System.out.println("Esse pedido ja foi realizado");
             Clear.waitkk();
             return;
         }
 
-        sc.nextLine();
         System.out.println("Deseja atualizar o status para qual estado?");
         System.out.println("Opcoes de estados = [REALIZADO, EM_PREPARO, ENTREGUE]: ");
         String res = sc.nextLine().toUpperCase();
@@ -488,10 +519,10 @@ class SistemaDelivery {
 
             Pedido.Status novoStatus = Pedido.Status.valueOf(res);
 
-            while(pedidoSelecionado.status.getDescricao().equalsIgnoreCase(novoStatus.getDescricao())){
+            while (pedidoSelecionado.status.getDescricao().equalsIgnoreCase(novoStatus.getDescricao())) {
                 System.out.println("Digite um estado que nao seja o atual do pedido: %d");
-                res = sc.nextLine().toUpperCase();                
-                
+                res = sc.nextLine().toUpperCase();
+
                 novoStatus = Pedido.Status.valueOf(res);
             }
 
@@ -571,15 +602,12 @@ public class Lista3 {
             System.out.println("[7] - Listar pedidos\n");
             System.out.println("[8] - Sair\n\n");
 
-            System.out.println("Digite sua escolha: ");
-            escolha = sc.nextInt();
+            escolha = Input.IntReceive("Digite sua escolha: ", sc);
 
             while (escolha < 1 || escolha > 8) {
-                System.out.println("As Escolhas vao de 1 ao 8, por favor digite sua escolha: ");
-                escolha = sc.nextInt();
+                escolha = Input.IntReceive("As Escolhas vao de 1 ao 8, por favor digite sua escolha: ", sc);
             }
 
-            sc.nextLine();
 
             Clear.clrscr();
             switch (escolha) {
@@ -618,15 +646,16 @@ public class Lista3 {
                         break;
                     }
                     ss.AtualizarPedido(sc);
+                    Clear.clrscr();
                     break;
                 }
                 case (7): {// listar pedidos
                     if (!ss.verifyPedido()) {
                         break;
                     }
-                    System.out.println("\nDigite [1] para listar apenas um e [2] para listar todos");
-                    int zz = sc.nextInt();
+                    int zz = Input.IntReceive("\nDigite [1] para listar apenas um e [2] para listar todos\n", sc);
                     ss.Listarpedidos(zz, sc);
+                    Clear.clrscr();
                     break;
                 }
                 case (8): {

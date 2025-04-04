@@ -417,7 +417,6 @@ class SistemaDelivery {
             novoPedido.atribuirEntregador(null);
         } else {
             novoPedido.atribuirEntregador(teste);
-            teste.status = true;
         }
 
         pedidos.add(novoPedido);

@@ -13,6 +13,16 @@ class Clear {
         } catch (IOException | InterruptedException ex) {
         }
     }
+
+    public static void waitkk() {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        Clear.clrscr();
+        return;
+    }
 }
 
 abstract class Usuario {
@@ -69,17 +79,38 @@ class Restaurante extends Usuario {
     }
 }
 
+class Item {
+    String nome;
+    Double preco;
+    int quantidade;
+
+    Item(String nome, Double preco, int quantidade) {
+        this.nome = nome;
+        this.preco = preco;
+        this.quantidade = quantidade;
+    }
+
+    public double getTotal() {
+        return preco * quantidade;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("- %s: R$ %.2f - Unidades[%d]", nome, preco, quantidade);
+    }
+}
+
 class Pedido {
 
     Cliente cliente;
     Restaurante restaurante;
     Entregador entregador;
     public double valor;
-    Map<String, Double> itens; // classe para itens ou vector de map;
+    List<Item> itens; // classe para itens ou vector de map;
 
     int id;
 
-    Pedido(Cliente cliente, Restaurante restaurante, Map<String, Double> itens, double valor, int id) {
+    Pedido(Cliente cliente, Restaurante restaurante, List<Item> itens, double valor, int id) {
         this.cliente = cliente;
         this.restaurante = restaurante;
         this.itens = itens;
@@ -93,6 +124,10 @@ class Pedido {
         ENTREGUE("Entregue");
 
         private String descricao;
+
+        public String getDescricao(){
+            return descricao;
+        }
 
         Status(String descricao) {
             this.descricao = descricao;
@@ -119,12 +154,13 @@ class Pedido {
                 "Restaurante: %s\n", cliente.nome, restaurante.nomeRestaurante);
 
         System.out.printf("Itens do Pedido[%d]:\n", id);
-        for (Map.Entry<String, Double> entry : itens.entrySet()) {
-            System.out.printf("- %s: R$ %.2f\n", entry.getKey(), entry.getValue());
+
+        for (Item i : itens) {
+            System.out.println("" + i);
         }
 
+        System.out.printf("Valor do Pedido: R$ %.2f\n", valor);
         System.out.println("Entregador: " + entregador.nome);
-        System.out.printf("Valor do Pedido: R$ %.2f", valor);
         System.out.println("Status: " + status);
         System.out.println("\n");
     }
@@ -284,7 +320,9 @@ class SistemaDelivery {
         Restaurante restauranteSelecionado = restaurantes.get(numRestaurante - 1);
         ShowRestaurantes(numRestaurante);
 
-        Map<String, Double> itensSelecionados = new HashMap<>();
+        // Map<String, Double> itensSelecionados = new HashMap<>();
+
+        List<Item> itensSelecionados = new ArrayList<>();
         double valorTotal = 0;
         boolean continuarPedido = true;
 
@@ -301,8 +339,26 @@ class SistemaDelivery {
 
             String itemSelecionado = listaItens.get(numItem - 1);
             double precoItem = restauranteSelecionado.cardapio.get(itemSelecionado);
-            itensSelecionados.put(itemSelecionado, precoItem);
-            valorTotal += precoItem;
+
+            System.out.println("Quantas unidades de " + itemSelecionado + " você deseja?");
+            int quantidade = sc.nextInt();
+            sc.nextLine();
+
+            boolean itemExistente = false;
+            for (Item item : itensSelecionados) {
+                if (item.nome.equals(itemSelecionado)) {
+                    item.quantidade += quantidade;
+                    valorTotal += precoItem * quantidade;
+                    itemExistente = true;
+                    break;
+                }
+            }
+
+            if (!itemExistente) {
+                Item novoItem = new Item(itemSelecionado, precoItem, quantidade);
+                itensSelecionados.add(novoItem);
+                valorTotal += novoItem.getTotal();
+            }
 
             System.out.println("Deseja adicionar mais itens? (s/n)");
             String resposta = sc.nextLine();
@@ -317,6 +373,7 @@ class SistemaDelivery {
             System.out.println("Nenhum entregador disponivel no momento. O pedido sera criado sem entregador.");
         }
         int id = pedidos.size() + 1;
+
         Pedido novoPedido = new Pedido(clienteSelecionado, restauranteSelecionado, itensSelecionados, valorTotal, id);
 
         if (teste != null) {
@@ -348,27 +405,14 @@ class SistemaDelivery {
                     p.atribuirEntregador(entregadorDisponivel);
                     System.out.printf("Entregador %s atribuido ao pedido do cliente %s\n", entregadorDisponivel.nome,
                             p.cliente);
-                    try {
-
-                        Thread.sleep(3000);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-                    Clear.clrscr();
-
+                    Clear.waitkk();
                     return;
                 }
             }
         }
 
         System.out.println("Todos os pedidos com entregadores");
-        try {
-
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        Clear.clrscr();
+        Clear.waitkk();
     }
 
     public void Listarpedidos(int x, Scanner sc) {
@@ -408,7 +452,7 @@ class SistemaDelivery {
         System.out.println("Qual o ID do pedido?");
         int id = sc.nextInt();
 
-        if (id < 0 || id >= pedidos.size()) {
+        if (id <= 0 || id > pedidos.size()) {
             System.out.println("ID de pedido invalido.");
 
             return;
@@ -424,13 +468,14 @@ class SistemaDelivery {
         if (!(ss.equalsIgnoreCase(pedidoSelecionado.cliente.email))) {
             System.out.println("Email em incorreto, volte ao menu e tente novamente");
 
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            Clear.clrscr();
+            Clear.waitkk();
 
+            return;
+        }
+
+        if(pedidoSelecionado.status.getDescricao().equalsIgnoreCase("Realizado")){
+            System.out.println("Esse pedido já foi realizado");
+            Clear.waitkk();
             return;
         }
 
@@ -442,6 +487,13 @@ class SistemaDelivery {
         try {
 
             Pedido.Status novoStatus = Pedido.Status.valueOf(res);
+
+            while(pedidoSelecionado.status.getDescricao().equalsIgnoreCase(novoStatus.getDescricao())){
+                System.out.println("Digite um estado que nao seja o atual do pedido: %d");
+                res = sc.nextLine().toUpperCase();                
+                
+                novoStatus = Pedido.Status.valueOf(res);
+            }
 
             pedidoSelecionado.atualizarStatus(novoStatus);
 
@@ -456,12 +508,7 @@ class SistemaDelivery {
             System.out.println("Status nao reconhecido. Use uma das opçoes validas.");
         }
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        Clear.clrscr();
+        Clear.waitkk();
     }
 
     public boolean verifyAll() {
@@ -471,12 +518,7 @@ class SistemaDelivery {
                     "Certifique-se que existe ao menos um cliente, um restaurante e um entregador cadastrados, ou pedidos, no sistema\n"
                             + //
                             "Aguarde para retornar ao menu");
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            Clear.clrscr();
+            Clear.waitkk();
             return false;
         }
         Clear.clrscr();
@@ -487,13 +529,7 @@ class SistemaDelivery {
         if (pedidos.isEmpty()) {
             System.out.println("ERROR: FALTA DE PEDIDOS\nAguarde para retornar ao menu");
 
-            try {
-
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            Clear.clrscr();
+            Clear.waitkk();
             return false;
         }
         Clear.clrscr();
@@ -504,13 +540,7 @@ class SistemaDelivery {
         if (entregadores.isEmpty()) {
             System.out.println("ERROR: FALTA DE ENTREGADORES\n" + //
                     "Aguarde para retornar ao menu");
-            try {
-
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            Clear.clrscr();
+            Clear.waitkk();
             return false;
         }
         Clear.clrscr();

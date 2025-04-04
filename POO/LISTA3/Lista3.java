@@ -351,6 +351,7 @@ class SistemaDelivery {
 
         if (numRestaurante < 1 || numRestaurante > restaurantes.size()) {
             System.out.println("Restaurante invalido.");
+            Clear.clrscr();
             return;
         }
 
@@ -377,7 +378,8 @@ class SistemaDelivery {
             String itemSelecionado = listaItens.get(numItem - 1);
             double precoItem = restauranteSelecionado.cardapio.get(itemSelecionado);
 
-            int quantidade = Input.IntReceive(String.format("Quantas unidades de " + itemSelecionado + " voce deseja?\n"),
+            int quantidade = Input.IntReceive(
+                    String.format("Quantas unidades de " + itemSelecionado + " voce deseja?\n"),
                     sc);
 
             boolean itemExistente = false;
@@ -405,16 +407,17 @@ class SistemaDelivery {
 
         Entregador teste = verificarDisponibilidade();
 
-        if (teste.status == false || teste == null) {
-            System.out.println("Nenhum entregador disponivel no momento. O pedido sera criado sem entregador.");
-        }
         int id = pedidos.size() + 1;
 
         Pedido novoPedido = new Pedido(clienteSelecionado, restauranteSelecionado, itensSelecionados, valorTotal,
                 id);
 
-        if (teste != null) {
+        if (teste == null || teste.status == false) {
+            System.out.println("Nenhum entregador disponivel no momento. O pedido sera criado sem entregador.");
+            novoPedido.atribuirEntregador(null);
+        } else {
             novoPedido.atribuirEntregador(teste);
+            teste.status = true;
         }
 
         pedidos.add(novoPedido);
@@ -427,9 +430,10 @@ class SistemaDelivery {
 
     public Entregador verificarDisponibilidade() {
         for (Entregador e : entregadores) {
-            if (!e.status)
+            if (!e.status) {
                 e.status = true;
-            return e;
+                return e;
+            }
         }
         return null;
     }
@@ -607,7 +611,6 @@ public class Lista3 {
             while (escolha < 1 || escolha > 8) {
                 escolha = Input.IntReceive("As Escolhas vao de 1 ao 8, por favor digite sua escolha: ", sc);
             }
-
 
             Clear.clrscr();
             switch (escolha) {

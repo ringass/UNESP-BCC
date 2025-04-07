@@ -201,7 +201,7 @@ class Pedido {
         }
 
         System.out.printf("Valor do Pedido: R$ %.2f\n", valor);
-        System.out.println("Entregador: " + entregador.nome);
+        System.out.println("Entregador: " + (entregador != null ? entregador.nome : "Esperando entregador ficar disponivel"));
         System.out.println("Status: " + status);
         System.out.println("\n");
     }
@@ -412,6 +412,7 @@ class SistemaDelivery {
         Pedido novoPedido = new Pedido(clienteSelecionado, restauranteSelecionado, itensSelecionados, valorTotal,
                 id);
 
+        Clear.clrscr();
         if (teste == null || teste.status == false) {
             System.out.println("Nenhum entregador disponivel no momento. O pedido sera criado sem entregador.");
             novoPedido.atribuirEntregador(null);
@@ -421,7 +422,6 @@ class SistemaDelivery {
 
         pedidos.add(novoPedido);
 
-        Clear.clrscr();
         System.out.println("Pedido criado com sucesso!");
         novoPedido.resumoDoPedido();
 
@@ -445,7 +445,7 @@ class SistemaDelivery {
                     p.atribuirEntregador(entregadorDisponivel);
                     System.out.printf("Entregador %s atribuido ao pedido do cliente %s\n",
                             entregadorDisponivel.nome,
-                            p.cliente);
+                            p.cliente.nome);
                     Clear.waitkk();
                     return;
                 }
@@ -508,8 +508,8 @@ class SistemaDelivery {
             return;
         }
 
-        if (pedidoSelecionado.status.getDescricao().equalsIgnoreCase("Realizado")) {
-            System.out.println("Esse pedido ja foi realizado");
+        if (pedidoSelecionado.status.getDescricao().equalsIgnoreCase("Entregue")) {
+            System.out.println("Esse pedido ja foi entregue");
             Clear.waitkk();
             return;
         }
@@ -529,12 +529,17 @@ class SistemaDelivery {
                 novoStatus = Pedido.Status.valueOf(res);
             }
 
-            pedidoSelecionado.atualizarStatus(novoStatus);
+            pedidos.get(id - 1).atualizarStatus(novoStatus);
 
             System.out.println("Status do pedido atualizado para: " + novoStatus);
 
-            if (res.equalsIgnoreCase("REALIZADO")) {
-                pedidos.get(id - 1).entregador.status = true;
+            if (res.equalsIgnoreCase("entregue")) {
+                
+                for(Entregador a: entregadores){
+                    if(a.email.equalsIgnoreCase(pedidoSelecionado.entregador.email)){
+                        a.status = false;
+                    }
+            }
                 System.out.println("Entregador disponivel: " + pedidos.get(id - 1).entregador.nome);
             }
 

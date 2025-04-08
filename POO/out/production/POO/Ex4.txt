@@ -1,0 +1,14 @@
+Override, na programação orientada a objetos, ocorre quando, em uma classe herdada, fazemos a sobrescrita de um método existente na classe original, mantendo a mesma assinatura, nome, tipo de retorno e parâmetros, mas adaptando-o ao contexto da subclasse.
+
+class Mesa {
+    void Cor() {
+        System.out.println("Azul");
+    }
+}
+
+class Cadeira extends Mesa {
+    @Override
+    void Cor() {
+        System.out.println("preto");
+    }
+}

@@ -36,7 +36,6 @@ void resolve(string str){
              }
              pilha.pop();
         }else{
-
             while(!pilha.empty() && prio(c) <= prio(pilha.top())){
                 ans += pilha.top();
                 pilha.pop();

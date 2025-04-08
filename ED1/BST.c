@@ -129,6 +129,14 @@ void posOrdem(No raiz)
     }
 }
 
+int treeSize(No node)
+{
+    if (node==NULL)
+        return 0;
+    else
+        return 1+(treeSize(node->pEsq) + treeSize(node->pDir));
+}
+
 int main()
 {
     No raiz = NULL;
@@ -150,6 +158,8 @@ int main()
     int nivel = 0;
     printf("\n\nPercurso por nivel:\n");
     mostra_nivel(raiz, &nivel);
+
+    printf("\n%d", treeSize(raiz));
 
     liberarArvore(raiz);
     return 0;

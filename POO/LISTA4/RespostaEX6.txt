@@ -1,0 +1,1 @@
+Essa linha serve para que, caso o conteúdo da área de texto ultrapasse o limite da página, pois não há um limite predefinido, ou seja, ultrapasse as margens, o scroll seja habilitado.

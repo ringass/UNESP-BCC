@@ -1,17 +1,17 @@
 import java.awt.*;
 import javax.swing.*;
 
-public class Calculadora extends JFrame {
+public class EX2 extends JFrame {
 
     JTextField campo1, campo2;
     JLabel igualLabel, resultadoLabel;
     JButton soma, subtrai, multiplica, divide;
 
-    public Calculadora() {
+    public EX2() {
         super("Calculadora");
 
         setLayout(new BorderLayout());
-
+        
         JPanel painelBotoes = new JPanel();
         painelBotoes.setLayout(new BoxLayout(painelBotoes, BoxLayout.Y_AXIS));
 
@@ -19,7 +19,7 @@ public class Calculadora extends JFrame {
         subtrai = new JButton("Subtrai");
         multiplica = new JButton("Multiplica");
         divide = new JButton("Divide");
-
+        
         Dimension maxSize = new Dimension(Integer.MAX_VALUE, soma.getPreferredSize().height);
         soma.setMaximumSize(maxSize);
         subtrai.setMaximumSize(maxSize);
@@ -33,8 +33,8 @@ public class Calculadora extends JFrame {
 
         JPanel painelCampos = new JPanel(new FlowLayout());
 
-        campo1 = new JTextField(5);
-        campo2 = new JTextField(5);
+        campo1 = new JTextField(13);
+        campo2 = new JTextField(13);
         igualLabel = new JLabel(" = ");
         resultadoLabel = new JLabel("0");
 
@@ -46,12 +46,12 @@ public class Calculadora extends JFrame {
 
         add(painelCampos, BorderLayout.CENTER);
 
-        setSize(400, 150);
+        pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
 
     public static void main(String[] args) {
-        new Calculadora();
+        new EX2();
     }
 }

@@ -1,0 +1,1 @@
+Nos é apresentado um painel geral do tipo border, com outro painel (grid) em seu topo, contendo apenas uma linha e quatro colunas para armazenar cada botão. A parte central do painel principal é preenchida pela textArea.

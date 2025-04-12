@@ -2,14 +2,14 @@ import math
 
 #adicionar função
 def f(x):
-    return math.cos(x) + 1
+    return 5 + 28*x - 4.905*x**2
 #adicionar derivada da função
 def df(x):
-    return -math.sin(x)
+    return 28 - 9.81*x
 
 
-def newton(x0, E=1e-5, max_iter=100):
-    for i in range(max_iter):
+def newton(x0, E=1e-3, max_i=100):
+    for i in range(max_i):
         fx = f(x0)
         dfx = df(x0)
 
@@ -21,7 +21,7 @@ def newton(x0, E=1e-5, max_iter=100):
         
         print(f"Iteração {i+1}: x = {x0:.6f}, x_n+1 = {x1:.6f}, f(x) = {f(x0):.6f}, df(x) = {df(x0): .6f}, f(x_n+1) = {f(x1):.6f}")
 
-        if abs(f(x1)) < E or (x1 - x0)/max(1, x1) < E:
+        if abs(f(x1)) < E or abs(x1 - x0)/max(1, x1) < E:
             print(f"Raiz = {x1:.6f}")
             return x1
 
@@ -31,4 +31,4 @@ def newton(x0, E=1e-5, max_iter=100):
     return x0
 
 
-newton(3.07) #valor de x
+newton(7) #valor de x

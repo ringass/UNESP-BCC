@@ -4,12 +4,12 @@ import math
 def f(x):
     return math.exp(x) - 4 * x**2
 
-def falsa_posicao(a, b, E=1e-2, max_rep=100):
+def falsa_posicao(a, b, E=1e-2, max_i=100):
     if f(a) * f(b) >= 0:
         print("sinais iguais, erro")
         return None
 
-    for i in range(max_rep):
+    for i in range(max_i):
         fa = f(a)
         fb = f(b)
         

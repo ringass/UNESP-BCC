@@ -2,10 +2,10 @@ import math
 
 #adicionar função
 def f(x):
-    return 5 + 28*x - 4.905*x**2
+    return x**2 - 3
 #adicionar derivada da função
 def df(x):
-    return 28 - 9.81*x
+    return 2*x
 
 
 def newton(x0, E=1e-3, max_i=100):
@@ -19,16 +19,16 @@ def newton(x0, E=1e-3, max_i=100):
 
         x1 = x0 - fx / dfx #formula
         
-        print(f"Iteração {i+1}: x = {x0:.6f}, x_n+1 = {x1:.6f}, f(x) = {f(x0):.6f}, df(x) = {df(x0): .6f}, f(x_n+1) = {f(x1):.6f}")
+        print(f"Iteração {i+1}: x = {x0:.5f}, x_n+1 = {x1:.5f}, f(x) = {f(x0):.5f}, df(x) = {df(x0): .5f}, f(x_n+1) = {f(x1):.5f}")
 
         if abs(f(x1)) < E or abs(x1 - x0)/max(1, x1) < E:
-            print(f"Raiz = {x1:.6f}")
+            print(f"Raiz = {x1:.5f}")
             return x1
 
         x0 = x1
 
-    print("máximo de iterações atingido.")
+    print("max iteracoes")
     return x0
 
 
-newton(7) #valor de x
+newton(2) #valor de x

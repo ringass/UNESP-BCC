@@ -130,6 +130,7 @@ void resolve(string str)
         cout << ans << endl;
     }
 }
+}
 
 int main()
 {

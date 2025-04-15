@@ -6,19 +6,19 @@ typedef struct reg *No;
 struct reg
 {
     int info;
-    int nivel;
+    int altura;
     struct reg *pEsq;
     struct reg *pDir;
 };
 
-int getNivel(No raiz)
+int getAltura(No raiz)
 {
     if (raiz == NULL)
     {
         return -1;
     }
 
-    return raiz->nivel;
+    return raiz->altura;
 }
 
 int max(int a, int b)
@@ -30,16 +30,16 @@ No criarNo(int valor)
 {
     No novo = (No)malloc(sizeof(struct reg));
     novo->info = valor;
-    novo->nivel = 0;
+    novo->altura = 0;
     novo->pEsq = NULL;
     novo->pDir = NULL;
     return novo;
 }
 
-int calcNivel(No raiz)
+int calcAltura(No raiz)
 {
 
-    return max(getNivel(raiz->pEsq), getNivel(raiz->pDir)) + 1;
+    return max(getAltura(raiz->pEsq), getAltura(raiz->pDir)) + 1;
 }
 
 No rDir(No raiz)
@@ -51,8 +51,8 @@ No rDir(No raiz)
     newPivot->pDir = raiz;
     raiz->pEsq = newEsq;
 
-    raiz->nivel = calcNivel(raiz);
-    newPivot->nivel = calcNivel(newPivot);
+    raiz->altura = calcAltura(raiz);
+    newPivot->altura = calcAltura(newPivot);
 
     return newPivot;
 }
@@ -66,8 +66,8 @@ No rEsq(No raiz)
     newPivot->pEsq = raiz;
     raiz->pDir = newDir;
 
-    raiz->nivel = calcNivel(raiz);
-    newPivot->nivel = calcNivel(newPivot);
+    raiz->altura = calcAltura(raiz);
+    newPivot->altura = calcAltura(newPivot);
 
     return newPivot;
 }
@@ -75,14 +75,12 @@ No rEsq(No raiz)
 int getBalanco(No raiz)
 {
 
-    //
-
     if (raiz == NULL)
     {
         return 0;
     }
 
-    return getNivel(raiz->pEsq) - getNivel(raiz->pDir);
+    return getAltura(raiz->pEsq) - getAltura(raiz->pDir);
 }
 
 No balancear(No raiz, int balanco)
@@ -91,7 +89,7 @@ No balancear(No raiz, int balanco)
     if (balanco > 1) // desequilibrada para a esquerda
     {
         if (getBalanco(raiz->pEsq) >= 0) // caso o no esteja balanceado ou desbalanceado para a esquerda
-        { // caso de rotação simples à direita
+        {                                // caso de rotação simples à direita
             return rDir(raiz);
         }
         else
@@ -103,7 +101,7 @@ No balancear(No raiz, int balanco)
     else if (balanco < -1) // desequilibrada para a direita
     {
         if (getBalanco(raiz->pDir) <= 0) // caso o no esteja balanceado ou desbalanceado para a direita
-        { // rotação simples à esquerda
+        {                                // rotação simples à esquerda
             return rEsq(raiz);
         }
         else // rotação dupla esquerda
@@ -131,7 +129,7 @@ No inserirAVL(No raiz, int valor)
         raiz->pDir = inserirAVL(raiz->pDir, valor);
     }
 
-    raiz->nivel = calcNivel(raiz);
+    raiz->altura = calcAltura(raiz);
 
     int balanco = getBalanco(raiz); // verifica o balanceamento
 
@@ -210,6 +208,75 @@ int treeNiveis(No node)
         return 1 + (treeNiveis(node->pEsq) + treeNiveis(node->pDir));
 }
 
+int excluirNode(No *raiz, int x)
+{
+
+    if (*raiz == NULL)
+    {
+        return 0;
+    }
+
+    if (x > (*raiz)->info)
+    {
+        return excluirNode(&(*raiz)->pDir, x);
+    }
+    else if (x < (*raiz)->info)
+    {
+        return excluirNode(&(*raiz)->pEsq, x);
+    }
+    else
+    {
+        No temp = *raiz;
+
+        if ((*raiz)->pEsq == NULL && (*raiz)->pDir == NULL)
+        {
+            free(*raiz);
+            *raiz = NULL;
+        }
+        else if ((*raiz)->pEsq == NULL)
+        {
+            *raiz = (*raiz)->pDir;
+            free(temp);
+        }
+        else if ((*raiz)->pDir == NULL)
+        {
+            *raiz = (*raiz)->pEsq;
+            free(temp);
+        }
+        else
+        {
+            No p = (*raiz)->pDir;
+            No q = NULL;
+            while (p->pEsq != NULL)
+            {
+                q = p;
+                p = p->pEsq;
+            }
+
+            (*raiz)->info = p->info;
+
+            if (q != NULL)
+            {
+                return excluirNode(&q->pEsq, p->info);
+            }
+            else
+            {
+                (*raiz)->pDir = p->pDir;
+            }
+
+            free(p);
+        }
+    }
+
+    (*raiz)->altura = calcAltura(*raiz);
+
+    int balanco = getBalanco(*raiz);
+
+    (*raiz) = balancear(*raiz, balanco);
+
+    return 1;
+}
+
 int main()
 {
     No raiz = NULL;
@@ -233,6 +300,16 @@ int main()
     mostra_nivel(raiz, &nivel);
 
     printf("\nquantidade de niveis: %d", treeNiveis(raiz));
+
+    excluirNode(&raiz, 4);
+
+    printf("Percurso em-ordem apos remocao: ");
+    emOrdem(raiz);
+    printf("\n");
+
+    nivel = 0;
+    printf("Percurso por nivel apos remocao:\n");
+    mostra_nivel(raiz, &nivel);
 
     liberarArvore(raiz);
     return 0;

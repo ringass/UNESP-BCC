@@ -46,12 +46,12 @@ void emOrdem(No raiz)
     }
 }
 
-//versao roberta -> sem fila
+// versao roberta -> sem fila
 void mostra_nivel(No raiz, int *nivel)
 {
     int i, nivel1;
 
-    for (i = 0; i <= (*nivel)*2; i++)
+    for (i = 0; i <= (*nivel) * 2; i++)
     {
         printf("  ");
     }
@@ -94,7 +94,6 @@ void mostra_nivel(No raiz, int *nivel)
 //             fila.push(raiz->pEsq);
 //         }
 
-
 //     }
 
 // }
@@ -131,10 +130,73 @@ void posOrdem(No raiz)
 
 int treeSize(No node)
 {
-    if (node==NULL)
+    if (node == NULL)
         return 0;
     else
-        return 1+(treeSize(node->pEsq) + treeSize(node->pDir));
+        return 1 + (treeSize(node->pEsq) + treeSize(node->pDir));
+}
+
+int excluirNode(No *raiz, int x)
+{
+
+    if (*raiz == NULL)
+    {
+        return 0;
+    }
+
+    if (x > (*raiz)->info)
+    {
+        excluirNode(&(*raiz)->pDir, x);
+    }
+    else if (x < (*raiz)->info)
+    {
+        excluirNode(&(*raiz)->pEsq, x);
+    }
+    else
+    {
+        No temp = *raiz;
+
+        if ((*raiz)->pEsq == NULL && (*raiz)->pDir == NULL)
+        {
+            free(*raiz);
+            *raiz = NULL;
+        }
+        else if ((*raiz)->pEsq == NULL)
+        {
+            *raiz = (*raiz)->pDir;
+            free(temp);
+        }
+        else if ((*raiz)->pDir == NULL)
+        {
+            *raiz = (*raiz)->pEsq;
+            free(temp);
+        }
+        else
+        {
+            No p = (*raiz)->pDir;
+            No q = NULL;
+            while (p->pEsq != NULL)
+            {
+                q = p;
+                p = p->pEsq;
+            }
+
+            (*raiz)->info = p->info;
+
+            if (q != NULL)
+            {
+                excluirNode(&q->pEsq, p->info);
+            }
+            else
+            {
+                (*raiz)->pDir = p->pDir;
+            }
+
+            free(p);
+        }
+    }
+
+    return 1;
 }
 
 int main()
@@ -159,7 +221,25 @@ int main()
     printf("\n\nPercurso por nivel:\n");
     mostra_nivel(raiz, &nivel);
 
-    printf("\n%d", treeSize(raiz));
+    printf("\nniveis: %d\n", treeSize(raiz));
+
+
+    if(excluirNode(&raiz, 20)){
+        printf("exluido com sucesso");
+    }else{
+        printf("erro na exclusao");
+    }
+    
+    excluirNode(&raiz, 40);
+
+    printf("Percurso em-ordem: ");
+    emOrdem(raiz);
+    printf("\n");
+    printf("Percurso pos-ordem: ");
+    posOrdem(raiz);
+    printf("\n");
+    printf("Percurso pre-ordem: ");
+    preOrdem(raiz);
 
     liberarArvore(raiz);
     return 0;

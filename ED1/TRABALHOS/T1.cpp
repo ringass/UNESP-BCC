@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
 void fast()
@@ -8,137 +7,136 @@ void fast()
     cin.tie(nullptr);
 }
 
-constexpr char aaaaa[11] = {'^', '*', '/', '+', '-', '>', '<', '=', '#', '.', '|'};
+const char operators[11] = {'^', '*', '/', '+', '-', '>', '<', '=', '#', '.', '|'};
+
+bool ver_operator(char c)
+{
+    for (char op : operators)
+    {
+        if (c == op)
+            return true;
+    }
+    return false;
+}
 
 int prio(char c)
 {
-
     if (c == '^')
-    {
         return 6;
-    }
     else if (c == '*' || c == '/')
-    {
         return 5;
-    }
     else if (c == '+' || c == '-')
-    {
         return 4;
-    }
     else if (c == '>' || c == '<' || c == '=' || c == '#')
-    {
         return 3;
-    }
     else if (c == '.')
-    {
         return 2;
-    }
     else if (c == '|')
-    {
         return 1;
-    }
     else
-    {
         return -1;
-    }
 }
 
 void resolve(string str)
 {
-
     stack<char> pilha;
     string ans;
     int count_parentesis = 0;
-    char last_c;
-    bool flag = false;
+    char last = '\0';
+    bool lexical_flag = false;
+    bool syntax_flag = false;
 
     for (int i = 0; i < str.length(); i++)
     {
         char c = str[i];
 
+        if (!isalnum(c) && !ver_operator(c) && c != '(' && c != ')')
+        {
+            lexical_flag = true;
+            break;
+        }
+
         if (i >= 1)
         {
-            last_c = str[i - 1];
-
-            int prio_last = prio(last_c);
-            int prio_now = prio(c);
-
-            if (prio_last > -1 && prio_now > -1)
+            if ((isalnum(last) && isalnum(c)) || (ver_operator(last) && ver_operator(c)))
             {
-                flag = true;
-            }
-            else if ((prio_last == -1 && prio_now == -1) && (isalnum(c) && isalnum(last_c)))
-            {
-                flag = true;
+                syntax_flag = true;
             }
         }
 
-        if (isalnum(c))//resolver
+        if (isalnum(c))
         {
             ans += c;
-        }else if(!isalnum(c)){
-
-            for(auto p : aaaaa){
-                if(){
-
-                }
-            }
         }
         else if (c == '(')
         {
-            pilha.push('(');
+            pilha.push(c);
             count_parentesis++;
         }
         else if (c == ')')
         {
             count_parentesis--;
-            while (pilha.top() != '(')
+            if (count_parentesis < 0)
+            {
+                syntax_flag = true;
+                break;
+            }
+            while (!pilha.empty() && pilha.top() != '(')
             {
                 ans += pilha.top();
                 pilha.pop();
             }
+            if (pilha.empty())
+            {
+                syntax_flag = true;
+                break;
+            }
             pilha.pop();
         }
-        else
+        else if (ver_operator(c))
         {
             while (!pilha.empty() && prio(c) <= prio(pilha.top()))
             {
                 ans += pilha.top();
                 pilha.pop();
             }
-
             pilha.push(c);
         }
 
+        last = c;
+    }
+
     while (!pilha.empty())
     {
+        if (pilha.top() == '(' || pilha.top() == ')')
+        {
+            syntax_flag = true;
+            break;
+        }
         ans += pilha.top();
         pilha.pop();
     }
 
-    if (count_parentesis != 0)
+    if (lexical_flag)
     {
-        cout << "Syntax Error!\n";
-        return;
+        cout << "Lexical Error!" << endl;
     }
-    else if (flag)
+    else if (syntax_flag || count_parentesis != 0)
     {
-        cout << "Lexical Error!\n";
+        cout << "Syntax Error!" << endl;
     }
     else
     {
         cout << ans << endl;
     }
 }
-}
 
 int main()
 {
-
     string str;
-
     while (cin >> str)
     {
         resolve(str);
     }
+    return 0;
 }

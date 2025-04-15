@@ -1,8 +1,5 @@
 // 	Árvore Binária de Busca (Ordenada)
 
-
-
-
 #include <stdio.h>
 #include <conio.h>
 //#include <alloc.h>

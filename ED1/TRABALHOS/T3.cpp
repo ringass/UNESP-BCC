@@ -13,20 +13,6 @@ void fast()
     cout.tie(nullptr);
 }
 
-typedef struct reg *no;
-
-struct reg
-{
-    ull val;
-    struct reg *pLink;
-};
-
-typedef struct
-{
-    no inicio;
-    no fim;
-} fila;
-
 void solve(int n, int m)
 {
 

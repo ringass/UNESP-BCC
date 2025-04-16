@@ -20,7 +20,7 @@ void inicializaFila(Fila *f)
     f->inicio = f->fim = NULL;
 }
 
-void enqueue(Fila *f, int valor)
+void enqueue(Fila *f, int valor) 
 {
     No novo = (No)malloc(sizeof(struct reg));
     novo->info = valor;
@@ -41,7 +41,7 @@ int dequeue(Fila *f)
 {
     if (f->inicio == NULL)
     {
-        printf("Fila vazia!\n");
+        printf("vazio\n");
         return -1;
     }
     No temp = f->inicio;
@@ -61,7 +61,7 @@ int front(Fila *f)
 {
     if (f->inicio == NULL)
     {
-        printf("Fila vazia!\n");
+        printf("vazio\n");
         return -1;
     }
     return f->inicio->info;

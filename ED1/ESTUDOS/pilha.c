@@ -28,7 +28,7 @@ void push(Pilha *p, int valor) {
 
 int pop(Pilha *p) {
     if (p->topo == NULL) {
-        printf("Pilha vazia!\n");
+        printf("vazio\n");
         return -1; 
     }
     No temp = p->topo;
@@ -41,7 +41,7 @@ int pop(Pilha *p) {
 
 int top(Pilha *p) {
     if (p->topo == NULL) {
-        printf("Pilha vazia!\n");
+        printf("vazio\n");
         return -1;
     }
     return p->topo->info;

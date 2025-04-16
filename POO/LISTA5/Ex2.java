@@ -3,14 +3,14 @@ import java.util.ArrayList;
 import java.awt.*;
 import javax.swing.*;
 
-public class Calc extends JFrame implements ActionListener {
+public class Ex2 extends JFrame implements ActionListener {
 
     JTextField campo1, campo2;
     JLabel igualLabel, resultadoLabel;
     JButton soma, subtrai, multiplica, divide;
 
-    public Calc() {
-        super("Calculadora");
+    public Ex2() {
+        super("Ex2uladora");
 
         setLayout(new BorderLayout());
 
@@ -77,6 +77,6 @@ public class Calc extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new Calc();
+        new Ex2();
     }
 }

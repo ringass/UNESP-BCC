@@ -1,1 +1,0 @@
-Em uma classe no java acontece o que já comentamos no exercicio 4, sobrecarga de métodos onde uma classe pode utilizar do mesmo nome em metodos distintos com o unico porem de terem o mesmo nome porem tipos, retornos e parametros diferentes.

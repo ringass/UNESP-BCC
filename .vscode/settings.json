@@ -15,6 +15,9 @@
         "regex": "cpp",
         "valarray": "cpp",
         "algorithm": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "new": "cpp",
+        "deque": "cpp",
+        "string": "cpp"
     }
 }

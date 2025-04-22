@@ -2,57 +2,79 @@
 
 using namespace std;
 
-int prio(char c){
+int prio(char c)
+{
 
-    if(c == '^'){
+    if (c == '^')
+    {
         return 3;
     }
-    else if(c == '*' || c == '/'){
+    else if (c == '*' || c == '/')
+    {
         return 2;
-    }else if(c == '+' || c == '-'){
+    }
+    else if (c == '+' || c == '-')
+    {
         return 1;
-    }else{
+    }
+    else
+    {
         return -1;
-    }  
+    }
 }
 
-
-void resolve(string str){
+void resolve(string str)
+{
 
     stack<char> pilha;
     string ans;
 
-    for(int i = 0; i < str.length(); i++){
+    for (int i = 0; i < str.length(); i++)
+    {
         char c = str[i];
 
-        if(c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || (c >= '0' && c <= '9')){
+        if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || (c >= '0' && c <= '9'))
+        {
             ans += c;
-        }else if(c == '('){
+        }
+        else if (c == '(')
+        {
+
             pilha.push('(');
-        }else if(c == ')'){
-            while(pilha.top() != '('){
+        }
+        else if (c == ')')
+        {
+
+            while (pilha.top() != '(')
+            {
                 ans += pilha.top();
                 pilha.pop();
-             }
-             pilha.pop();
-        }else{
-            while(!pilha.empty() && prio(c) <= prio(pilha.top())){
+            }
+
+            pilha.pop();
+        }
+        else
+        {
+            while (!pilha.empty() && prio(c) <= prio(pilha.top()))
+            {
                 ans += pilha.top();
                 pilha.pop();
             }
 
             pilha.push(c);
         }
-}
-        while(!pilha.empty()){
-            ans += pilha.top();
-            pilha.pop();
-}
-        
+    }
+    while (!pilha.empty())
+    {
+        ans += pilha.top();
+        pilha.pop();
+    }
+
     cout << ans << endl;
 }
 
-void fast() {
+void fast()
+{
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
 }
@@ -72,7 +94,7 @@ int main()
 
         cin >> str;
 
-        resolve(str);    
+        resolve(str);
     }
 
     return 0;

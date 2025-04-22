@@ -11,6 +11,71 @@ struct reg
     struct reg *pDir;
 };
 
+typedef struct teg *no_fila;
+
+struct teg
+{
+    No val;
+    struct teg *plink;
+};
+
+typedef struct
+{
+    no_fila inicio;
+    no_fila fim;
+} Fila;
+
+void inicializa_fila(Fila *f)
+{
+    f->inicio = f->fim = NULL;
+    ;
+}
+
+void enqueue(Fila *f, No raiz)
+{
+
+    no_fila new = (no_fila)malloc(sizeof(struct teg));
+
+    new->val = raiz;
+
+    new->plink = NULL;
+
+    if (f->fim == NULL)
+    {
+        f->fim = f->inicio = new;
+        return;
+    }
+
+    f->fim->plink = new;
+    f->fim = new;
+}
+
+No dequeue(Fila *f)
+{
+
+    if (f->fim == NULL)
+    {
+        return NULL;
+    }
+
+    no_fila temp;
+
+    temp = f->inicio;
+    No val = temp->val;
+
+    f->inicio = temp->plink;
+
+    if (f->inicio == NULL)
+    {
+        f->fim = NULL;
+    }
+
+    free(temp);
+
+    return val;
+}
+
+
 int getAltura(No raiz)
 {
     if (raiz == NULL)
@@ -42,6 +107,9 @@ int calcAltura(No raiz)
     return max(getAltura(raiz->pEsq), getAltura(raiz->pDir)) + 1;
 }
 
+//rota para a direita
+//nó selecionado vira filho da direita de seu nó esquerdo (newpivot) e recebe por fim o filho da direita do newpivot como seu novo filho esquerdo;
+
 No rDir(No raiz)
 {
 
@@ -57,6 +125,8 @@ No rDir(No raiz)
     return newPivot;
 }
 
+//rota para a esquerda
+//nó selecionado vira filho da esquerda de seu nó direito (newpivot) e recebe por fim o filho esquerdo do newpivot como seu novo filho direito;
 No rEsq(No raiz)
 {
 
@@ -80,15 +150,15 @@ int getBalanco(No raiz)
         return 0;
     }
 
-    return getAltura(raiz->pEsq) - getAltura(raiz->pDir);
+    return  getAltura(raiz->pDir) - getAltura(raiz->pEsq);
 }
 
 No balancear(No raiz, int balanco)
 {
 
-    if (balanco > 1) // desequilibrada para a esquerda
+    if (balanco < -1) // desequilibrada para a esquerda
     {
-        if (getBalanco(raiz->pEsq) >= 0) // caso o no esteja balanceado ou desbalanceado para a esquerda
+        if (getBalanco(raiz->pEsq) <= 0) // caso o nó esteja balanceado ou desbalanceado para a esquerda
         {                                // caso de rotação simples à direita
             return rDir(raiz);
         }
@@ -98,9 +168,9 @@ No balancear(No raiz, int balanco)
             return rDir(raiz);
         }
     }
-    else if (balanco < -1) // desequilibrada para a direita
+    else if (balanco > 1) // desequilibrada para a direita
     {
-        if (getBalanco(raiz->pDir) <= 0) // caso o no esteja balanceado ou desbalanceado para a direita
+        if (getBalanco(raiz->pDir) >= 0) // caso o nó esteja balanceado ou desbalanceado para a direita
         {                                // rotação simples à esquerda
             return rEsq(raiz);
         }
@@ -147,35 +217,35 @@ void emOrdem(No raiz)
 }
 
 // versao roberta -> sem fila
-void mostra_nivel(No raiz, int *nivel)
-{
-    int i, nivel1;
+// void mostra_nivel(No raiz, int *nivel)
+// {
+//     int i, nivel1;
 
-    for (i = 0; i <= (*nivel) * 2; i++)
-    {
-        printf("  ");
-    }
-    printf("%d\n", raiz->info);
-    nivel1 = (*nivel) + 1;
-    if (raiz)
-    {
-        if (raiz->pDir != NULL)
-        {
-            mostra_nivel(raiz->pDir, &nivel1);
-        }
-        if (raiz->pEsq != NULL)
-        {
-            mostra_nivel(raiz->pEsq, &nivel1);
-        }
-    }
-}
+//     for (i = 0; i <= (*nivel) * 2; i++)
+//     {
+//         printf("  ");
+//     }
+//     printf("%d\n", raiz->info);
+//     nivel1 = (*nivel) + 1;
+//     if (raiz)
+//     {
+//         if (raiz->pDir != NULL)
+//         {
+//             mostra_nivel(raiz->pDir, &nivel1);
+//         }
+//         if (raiz->pEsq != NULL)
+//         {
+//             mostra_nivel(raiz->pEsq, &nivel1);
+//         }
+//     }
+// }
 
-void liberarArvore(No raiz)
+void liberarNo(No raiz)
 {
     if (raiz != NULL)
     {
-        liberarArvore(raiz->pEsq);
-        liberarArvore(raiz->pDir);
+        liberarNo(raiz->pEsq);
+        liberarNo(raiz->pDir);
         free(raiz);
     }
 }
@@ -206,6 +276,55 @@ int treeNiveis(No node)
         return 0;
     else
         return 1 + (treeNiveis(node->pEsq) + treeNiveis(node->pDir));
+}
+
+
+void mostrar_nivel(No raiz)
+{
+
+    if (raiz == NULL)
+    {
+        return;
+    }
+
+    Fila f;
+    inicializa_fila(&f);
+
+    enqueue(&f, raiz);
+
+    while (f.inicio != NULL)
+    {
+
+        int nivel = 0;
+
+        no_fila temp = f.inicio;
+
+        while (temp != NULL)
+        {
+            nivel++;
+            temp = temp->plink;
+        }
+
+        for (int i = 0; i < nivel; i++)
+        {
+
+            No atual = dequeue(&f);
+
+            printf("%d ", atual->info);
+
+            if (atual->pEsq != NULL)
+            {
+                enqueue(&f, atual->pEsq);
+            }
+
+            if (atual->pDir != NULL)
+            {
+                enqueue(&f, atual->pDir);
+            }
+        }
+
+        printf("\n");
+    }
 }
 
 int excluirNode(No *raiz, int x)
@@ -280,11 +399,11 @@ int excluirNode(No *raiz, int x)
 int main()
 {
     No raiz = NULL;
-    raiz = inserirAVL(raiz, 1);
-    raiz = inserirAVL(raiz, 2);
-    raiz = inserirAVL(raiz, 3);
+    raiz = inserirAVL(raiz, 12);
     raiz = inserirAVL(raiz, 4);
-    raiz = inserirAVL(raiz, 5);
+    raiz = inserirAVL(raiz, 8);
+    raiz = inserirAVL(raiz, 2);
+    raiz = inserirAVL(raiz, 6);
 
     printf("Percurso em-ordem: ");
     emOrdem(raiz);
@@ -297,7 +416,7 @@ int main()
 
     int nivel = 0;
     printf("\n\nPercurso por nivel:\n");
-    mostra_nivel(raiz, &nivel);
+    mostrar_nivel(raiz);
 
     printf("\nquantidade de niveis: %d", treeNiveis(raiz));
 
@@ -307,10 +426,12 @@ int main()
     emOrdem(raiz);
     printf("\n");
 
-    nivel = 0;
-    printf("Percurso por nivel apos remocao:\n");
-    mostra_nivel(raiz, &nivel);
 
-    liberarArvore(raiz);
+
+    // nivel = 0;
+    // printf("Percurso por nivel apos remocao:\n");
+    // mostra_nivel(raiz, &nivel);
+
+    liberarNo(raiz);
     return 0;
 }

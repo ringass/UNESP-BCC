@@ -1,7 +1,7 @@
 import math
 
 def f(x0):
-    return math.exp(x0 - 2)
+    return math.exp(x0 - 2) + x0
 
 def dfx(x0, h):
     return (f(x0 + h) - f(x0 - h)) / (2 * h)

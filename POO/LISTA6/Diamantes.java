@@ -20,5 +20,6 @@ public class Diamantes {
             
             System.out.println(qtConjunto);
         }
+        sc.close();
     }
 }

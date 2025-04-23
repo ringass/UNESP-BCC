@@ -21,5 +21,7 @@ public class Teams {
         }
 
         System.out.println(ans);
+
+        sc.close();
     }
 }

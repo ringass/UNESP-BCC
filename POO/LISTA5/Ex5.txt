@@ -1,0 +1,1 @@
+A principal diferença na implementação é o fato de que, ao usarmos a interface Listener, somos obrigados a escrever (mesmo que não utilizemos) todos os métodos da interface. Já ao utilizarmos um Adapter, isso não ocorre, pois, por ser uma classe abstrata, precisamos sobrescrever apenas os métodos que nos interessam.

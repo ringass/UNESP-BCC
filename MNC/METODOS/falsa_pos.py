@@ -2,9 +2,9 @@ import math
 
 #adicionar função
 def f(x):
-    return math.exp(x) - 4 * x**2
+    return x - x*math.log(x)
 
-def falsa_posicao(a, b, E=1e-2, max_i=100):
+def falsa_posicao(a, b, E=1e-3, max_i=100):
     if f(a) * f(b) >= 0:
         print("sinais iguais, erro")
         return None
@@ -27,4 +27,4 @@ def falsa_posicao(a, b, E=1e-2, max_i=100):
             a = x
 
 
-falsa_posicao(0, 1) #valor de a, b [a;b]
+falsa_posicao(1, 3.5) #valor de a, b [a;b]

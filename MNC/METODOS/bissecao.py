@@ -2,7 +2,7 @@ import math
 
 #adicionar função
 def f(x):
-    return (1 - (1 + x)**-12)/x - 8.5
+    return x - x*math.log(x)
 
 def bissecao(a, b, E=1e-3, max_i=100):
     for i in range(max_i):
@@ -22,4 +22,4 @@ def bissecao(a, b, E=1e-3, max_i=100):
         else:
             a = x
 
-bissecao(0.04, 0.06) #valor de a, b [a;b]
+bissecao(2.7, 2.8) #valor de a, b [a;b]

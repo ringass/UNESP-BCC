@@ -2,10 +2,10 @@ import math
 
 #adicionar função
 def f(x):
-    return x**2 - 3
+    return (x/4) - math.tan(x) 
 #adicionar derivada da função
 def df(x):
-    return 2*x
+    return (1/4) - 1/math.cos(x)**2
 
 
 def newton(x0, E=1e-3, max_i=100):
@@ -31,4 +31,4 @@ def newton(x0, E=1e-3, max_i=100):
     return x0
 
 
-newton(2) #valor de x
+newton(1.2) #valor de x

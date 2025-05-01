@@ -2,7 +2,7 @@ import math
 
 #adicionar função
 def f(x):
-    return x - x*math.log(x)
+    return (5 * x) - 100
 
 def falsa_posicao(a, b, E=1e-3, max_i=100):
     if f(a) * f(b) >= 0:
@@ -27,4 +27,4 @@ def falsa_posicao(a, b, E=1e-3, max_i=100):
             a = x
 
 
-falsa_posicao(1, 3.5) #valor de a, b [a;b]
+falsa_posicao(-0.5, -1) #valor de a, b [a;b]

@@ -18,7 +18,7 @@ def problema2(V):
 
 
 def problema3(x):
-    return (x**2 / 1e5 - x) - 1e-5
+    return (x**2 / (1e5 - x)) - 1e-5
 
 
 def problema4(r):

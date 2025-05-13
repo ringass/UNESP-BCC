@@ -1,0 +1,17 @@
+Ex1)
+-> No código da página 8, temos o método ThreadSimples implementando a interface Runnable em vez de estender a classe Thread. Isso implica que, ao estender Thread, não poderíamos estender nenhuma outra classe, o que pode ser uma limitação caso precisemos herdar de outra classe essencial. Isso não ocorre ao implementar Runnable, pois mantemos a possibilidade de herdar outra classe.
+Uma vantagem de usar Runnable é justamente essa flexibilidade de herança, além de facilitar testes, já que podemos instanciar objetos Runnable e passá-los para outras classes com mais facilidade.
+Como desvantagem, não conseguimos acessar diretamente métodos específicos da classe Thread, o que pode limitar o controle da execução da thread em uma visão mais ampla.
+
+Ex3)
+-> Ele é usado para executar uma tarefa na thread do Swing (EDT – Event Dispatch Thread), sem bloquear a execução até o término do método run() da thread.
+
+Ex4)
+-> O método está sendo chamado dentro do actionPerformed, que é invocado automaticamente pela EDT quando o botão é clicado. Como o código já está em execução na EDT, não é necessário usar invokeLater ou invokeAndWait para atualizar a interface gráfica nesse contexto.
+
+Ex5)
+-> Não. Se não utilizarmos o invokeLater, poderemos ter comportamentos indefinidos e erros de concorrência, pois a tarefa poderá ser executada por uma thread que não é a EDT, o que compromete a segurança da manipulação da interface gráfica.
+
+Ex6)
+-> O código utiliza invokeAndWait, ou seja, espera o término da execução na EDT, como mostrado no diagrama do slide. Se trocarmos para invokeLater, a execução não aguardará a EDT terminar, podendo ocorrer o incremento antes da conclusão da tarefa gráfica. Isso pode fazer com que a animação fique fora de ordem.
+

@@ -52,7 +52,6 @@ def tabela(): #cópia da tabela do pdf, para melhor visualização do problema
     print()
     
 
-
 def plot_grafico(data):
     
     

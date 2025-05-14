@@ -1,3 +1,5 @@
+//Murilo Tomaz Gonzaga - BCC 024
+
 import java.util.*;
 import javax.swing.*;
 import java.awt.*;
@@ -14,37 +16,42 @@ public class Cliente {
     private static ObjectInputStream in;
     private static String simbol;
 
-      public static void main(String[] args) {
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
                 Socket socket = new Socket(ADDRESS, PORT);
                 out = new ObjectOutputStream(socket.getOutputStream());
                 in = new ObjectInputStream(socket.getInputStream());
 
-                simbol = (String) in.readObject(); 
+                simbol = (String) in.readObject();
 
-                GUI window = new GUI(out, in, simbol);
+                GUI window = new GUI(out, simbol);
                 window.setVisible(true);
 
-                // Thread para receber atualizações do servidor
                 new Thread(() -> {
                     try {
                         while (true) {
                             Object received = in.readObject();
-                            
-                            if (received instanceof String[][]) {
-                                String[][] state = (String[][]) received;
-                                
+
+                            if (received instanceof String[][] state) {
                                 if (state.length == 1 && state[0].length == 1) {
-                                    // Mensagem de fim de jogo
                                     SwingUtilities.invokeLater(() -> {
                                         window.disableAllButtons();
                                         JOptionPane.showMessageDialog(window, state[0][0]);
                                     });
-                                    break;
+
+                                    try {
+                                        in.close();
+                                        out.close();
+                                        socket.close();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
                                 } else {
-                                    // Atualização normal do tabuleiro
+
                                     SwingUtilities.invokeLater(() -> window.Refresh(state));
+
                                 }
                             }
                         }
@@ -64,14 +71,10 @@ class GUI extends JFrame implements ActionListener {
 
     private final JButton[][] buttons = new JButton[3][3];
     private final ObjectOutputStream out;
-    private final ObjectInputStream in;
-    private final String simbol;
 
-    public GUI(ObjectOutputStream out, ObjectInputStream in, String simbol) {
+    public GUI(ObjectOutputStream out, String simbol) {
 
         this.out = out;
-        this.in = in;
-        this.simbol = simbol;
 
         setTitle("Jogo da Velha - Jogando como " + simbol);
         setSize(600, 500);
@@ -99,7 +102,7 @@ class GUI extends JFrame implements ActionListener {
             for (int j = 0; j < 3; j++) {
                 if (buttons[i][j] == button && button.getText().equals("-")) {
                     try {
-                        out.writeObject(new int[]{i, j});
+                        out.writeObject(new int[] { i, j });
                         out.flush();
                     } catch (IOException ex) {
                         ex.printStackTrace();
@@ -113,6 +116,10 @@ class GUI extends JFrame implements ActionListener {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 buttons[i][j].setText(state[i][j]);
+
+                if (state[i][j].equals("X") || state[i][j].equals("O")) {
+                    buttons[i][j].setEnabled(false);
+                }
             }
         }
     }

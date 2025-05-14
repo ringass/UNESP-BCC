@@ -1,3 +1,5 @@
+//Murilo Tomaz Gonzaga - BCC 024
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -55,28 +57,30 @@ public class Servidor {
                             ((simbolo.equals("X") && P1Time) || (simbolo.equals("O") && !P1Time))) {
 
                         tabuleiro[l][c] = simbolo;
+
+                        System.out.println("" + tabuleiro[l][c]);
+
                         P1Time = !P1Time;
 
                         Envia();
 
-                        
                         if (Win(simbolo)) {
                             String msgVitoria = "Voce venceu!";
                             String msgDerrota = "Voce perdeu!";
 
-                            Out1.writeObject(simbolo.equals("X") ? new String[][]{{msgVitoria}} : new String[][]{{msgDerrota}});
-                            Out2.writeObject(simbolo.equals("O") ? new String[][]{{msgVitoria}} : new String[][]{{msgDerrota}});
+                            Out1.writeObject(simbolo.equals("X") ? new String[][] { { msgVitoria } }
+                                    : new String[][] { { msgDerrota } });
+                            Out2.writeObject(simbolo.equals("O") ? new String[][] { { msgVitoria } }
+                                    : new String[][] { { msgDerrota } });
                             Out1.flush();
                             Out2.flush();
                             break;
                         } else if (verificarEmpate()) {
-                            Out1.writeObject(new String[][]{{"Empate!"}});
-                            Out2.writeObject(new String[][]{{"Empate!"}});
+                            Out1.writeObject(new String[][] { { "Empate!" } });
+                            Out2.writeObject(new String[][] { { "Empate!" } });
                             Out1.flush();
                             Out2.flush();
                             break;
-                        } else {
-                            Envia();
                         }
                     }
                 }
@@ -86,12 +90,15 @@ public class Servidor {
         }
     }
 
-
     private static void Envia() throws IOException {
+        Out1.reset();
         Out1.writeObject(tabuleiro);
         Out1.flush();
+
+        Out2.reset();
         Out2.writeObject(tabuleiro);
         Out2.flush();
+
     }
 
     private static boolean Win(String simbolo) {

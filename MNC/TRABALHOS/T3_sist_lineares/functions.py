@@ -51,9 +51,63 @@ def ver_simetria(A):
     return np.array_equal(A, A.T)
 
 
+def cri_linhas(A):
+
+    n = len(A)
+    X = np.zeros(n)
+
+    for i in range(n):
+        for j in range(n):
+            if(i != j):
+                X[i] = abs(A[i, j] / A[i, i]);
+
+    if(max(X) < 1):
+        return True
+    
+    return False
+
+def cri_colunas(A):
+
+    n = len(A)
+    X = np.zeros(n)
+
+    for j in range(n):
+        for i in range(n):
+            if(j != i):
+                X[j] = abs(A[i, j] / A[j, j]);
+
+    if(max(X) < 1):
+        return True
+    
+    return False
+
+def estri_diagonal(A):
+
+    n = len(A)
+
+    for i in range(n):
+        soma = 0.0
+
+        for j in range(n):
+
+            if(j != i):
+                soma += A[i, j]
+
+        if abs(A[i, i]) > abs(soma):
+            return True
+
+    return False
+
+                
 ## SOLUTION ##
 
-# def solution(A, B, X, RES):
+def solution(A, B, RES):
+
+    
+
+    
+
+
 
 
 ## metodos

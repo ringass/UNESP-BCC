@@ -1,5 +1,7 @@
 import numpy as np
 import math
+import threading
+
 
 ## UTILS ##
 def ver_pivos(A):
@@ -19,6 +21,7 @@ def ver_quadrada(A):
 
     return lin == col
 
+
 def ver_inversa(A):
     return np.linalg.det(A) != 0
 
@@ -33,44 +36,41 @@ def menores_principais(A, pos=False):
         det = np.linalg.det(sub)
 
         if det != 0 and not pos:
-            
+
             return False
-        
+
         elif det < 0 and pos:
-            
+
             return False
-            
-            
+
     return True
 
+
 def ver_simetria(A):
-    
+
     return np.array_equal(A, A.T)
 
 
 ## SOLUTION ##
 
 # def solution(A, B, X, RES):
-    
-    
-    
 
 
 ## metodos
+
 
 ## GAUSS-JORDAN ##
 def gauss_jordan(A, B):
 
     if not ver_quadrada(A):
         return False, None
-    
+
     elif not ver_pivos(A):
         return False, None
-    
+
     elif not ver_inversa(A):
         return False, None
-        
-    
+
     n = len(B)
 
     M = np.hstack((A.astype(float), B.astype(float)))
@@ -91,21 +91,20 @@ def gauss_jordan(A, B):
 ## DECOMPOSICAO LU ##
 def decomposicao_lu(A):
 
-    #convergencia dos amigos
-    if(not ver_quadrada(A)):
+    # convergencia dos amigos
+    if not ver_quadrada(A):
         return False, None
-    
-    elif(not menores_principais(A)):
+
+    elif not menores_principais(A):
         return False, None
-          
-          
+
     n = len(A)
 
     L = np.identity(n, dtype=float)
     U = np.zeros((n, n), dtype=float)
 
     for k in range(n):
-        
+
         for j in range(k, n):
 
             for s in range(k):
@@ -116,78 +115,152 @@ def decomposicao_lu(A):
                 for s in range(k):
 
                     L[i, k] = (1 / U[k, k]) * (A[i, k] - L[i, s] * U[s, k])
-    
+
     return True, L, U
+
 
 ## CHOLESKY ##
 
+
 def cholesky(A):
-    
-    #convergencia dos amigos
-    if(not ver_simetria(A)):
+
+    # convergencia dos amigos
+    if not ver_simetria(A):
         return False, None
-    
-    elif(not menores_principais(A, True)):
+
+    elif not menores_principais(A, True):
         return False, None
-    
-    n = len(A);
-    
-    L = np.zeros((n, n), dtype=float);
-    
-    for i in range (n):
-        
+
+    n = len(A)
+
+    L = np.zeros((n, n), dtype=float)
+
+    for i in range(n):
+
         for j in range(i):
             soma = 0.0
-            
+
             for k in range(j):
                 soma += L[i, k] * L[j, k]
 
             if i == j:
-                
+
                 L[i, j] = math.sqrt(A[i, i] - soma)
-            
+
             else:
-                
-                L[i, j] = (A[i, j] - soma)/L[j, j]
-                
-    
+
+                L[i, j] = (A[i, j] - soma) / L[j, j]
+
     return True, L
+
 
 ## GAUSS-COMPACTO ##
 
+
 def gauss_compacto(A):
-    
+
     if not ver_quadrada(A):
         return False, None
-    
+
     elif not ver_pivos(A):
         return False, None
-    
+
     elif not ver_inversa(A):
         return False, None
 
-    n = len(B)
+    n = len(A)
 
-    M = np.hstack((A.astype(float), B.astype(float)))
-    
+    L = np.eye(n)
+
+    U = A.copy()
+
+    for i in range(n):
+
+        for j in range(i + 1, n):
+
+            if U[i, i] == 0:
+
+                return False, None
+            else:
+
+                L[j, i] = U[j, i] / U[i, i]
+                U[j, i:] = U[j, i:] - L[j, i] * U[i, i:]
+
+    return True, L, U
+
 
 ## Jacobi-Richardson ##
 
+def jacobi_richardson(A, B):
+    n = len(A)
+    k_max = 50
+    err = 1e-5
+    X = np.zeros(n, dtype=float)
+    
+    
+    def calcula_linha(A, B, X_, i, results):
+        
+        soma = 0.0
+        
+        for j in range(n):
+            
+            if j != i:
+                soma += A[i, j] * X_[j] 
+        
+        results[i] = (B[i] - soma) / A[i, i]
 
+
+    for k in range(k_max): 
+        X_ = X.copy()
+        
+        threads = []
+        results = np.zeros(n, dtype=float)
+
+        
+        for i in range(n):
+            thread = threading.Thread(target=calcula_linha, args=(A, B, X_, i, results))
+            threads.append(thread)
+            thread.start()
+
+        
+        for thread in threads:
+            thread.join()
+
+        X = results
+
+       
+        if np.linalg.norm(X - X_, ord=np.inf) < tol:
+            return True, X, k + 1
+
+    return False, X, k_max
 
 
 ## Gauss-Seidel ##
-    
-    
-    
-    
-    
-    
-    
-    
-    
-                
+def gauss_seidel(A, B):
+    n = len(A)
+    k_max = 50
+    err = 1e-5
 
+    X = np.zeros(n, dtype=float)
 
+    for k in range(k_max):
 
+        X_ = X.copy()
 
+        for i in range(n):
+            soma1 = 0.0
+            soma2 = 0.0
+
+            for j in range(i):
+                soma1 += A[i, j] * X[j]
+
+            for j in range(i + 1, n):
+                soma2 += A[i, j] * X_[j]
+
+            X[i] = (B[i] - soma1 - soma2) / A[i, i]
+
+        if np.linalg.norm(X[i] - X_[i], ord=np.inf) < err:
+
+            return True, X, k + 1
+
+    return False, X, k_max

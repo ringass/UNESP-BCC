@@ -80,22 +80,18 @@ def cri_colunas(A):
 
     return max(X) < 1
 
+
 def estri_diagonal(A):
-
     n = len(A)
-
     for i in range(n):
-        soma = 0.0
-
         for j in range(n):
-
-            if j != i:
-                soma += A[i, j]
-
-        if abs(A[i, i]) > abs(soma):
-            return True
-
-    return False
+            if i != j:
+                soma += abs(A[i, j])
+        
+            if abs(A[i, i]) <= soma:
+                return False
+        
+    return True
 
 
 def criterio_sassenfeld(A):
@@ -117,9 +113,6 @@ def criterio_sassenfeld(A):
 
 def solution(L, U, B, tf, name):
     if not tf:
-        print(
-            f"O método {name} nao pode ser utilizado pois nao respeitou os criterios de convergencia"
-        )
         return None
 
     n = len(B)
@@ -137,7 +130,6 @@ def solution(L, U, B, tf, name):
     elif name in ["Jacobi-Richardson", "Gauss-Seidel"]:
         X = U
     else:
-        print(f"Metodo {name} nao reconhecido")
         return None
 
     return X
@@ -156,6 +148,8 @@ def gauss_jordan(A, B):
         return False, None
 
     n = len(B)
+    
+    B = B.reshape(-1, 1)
 
     M = np.hstack((A.astype(float), B.astype(float)))
 
@@ -190,7 +184,7 @@ def decomposicao_lu(A):
     for k in range(n):
 
         for j in range(k, n):
-            
+
             soma = 0
             for s in range(k):
                 soma += L[k, s] * U[s, j]
@@ -199,7 +193,7 @@ def decomposicao_lu(A):
 
         for i in range(k + 1, n):
             soma = 0
-                
+
             for s in range(k):
 
                 soma += L[i, s] * U[s, k]
@@ -246,6 +240,7 @@ def cholesky(A):
 
 ## GAUSS-COMPACTO ##
 
+
 def gauss_compacto(A):
 
     if not ver_quadrada(A):
@@ -282,9 +277,9 @@ def gauss_compacto(A):
 
 
 def jacobi_richardson(A, B):
-    
+
     if not cri_linhas(A) and not cri_colunas(A):
-        return False, None, None, None    
+        return False, None, None, None
     n = len(A)
     k_max = 50
     err = 1e-5
@@ -319,7 +314,9 @@ def jacobi_richardson(A, B):
         X = results
         h.append(X.copy())
 
-        erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(X, ord=np.inf)
+        erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(
+            X, ord=np.inf
+        )
 
         if erro_relativo < err:
             return True, X, k + 1, np.array(h), erro_relativo
@@ -359,7 +356,9 @@ def gauss_seidel(A, B):
 
         h.append(X.copy())
 
-        erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(X, ord=np.inf)
+        erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(
+            X, ord=np.inf
+        )
 
         if erro_relativo < err:
             return True, X, k + 1, np.array(h), erro_relativo

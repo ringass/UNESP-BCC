@@ -132,29 +132,31 @@ def select():
     print("[4] - Gauss-Jordan")
     print("[5] - Jacobi-Richardson")
     print("[6] - Gauss-Seidel")
-    print("[7] - Executar todos e plotar")
+    print("[7] - Tabelar métodos")
     print("[0] - Sair")
 
     while True:
         try:
             e = int(input("Digite o index desejado: "))
-            if 0 <= e <= 6:
+            if 0 <= e <= 7:
                 return e
             else:
-                print("Digite um numero entre 0 e 6")
+                print("Digite um numero entre 0 e 7")
         except ValueError:
             print("Digite um numero válido")
 
 
 def exec(metodo=None):
-    tempos = [0, 0, 0, 0, 0, 0] * 6
+    tempos = [0, 0, 0, 0, 0, 0]
     erros = [None, None, None, None, None, None]
 
     X_lu = X_gc = X_c = X_gj = X_jacobi = X_seidel = None
     hist_jacobi = None
     hist_seidel = None
     it_jacobi = it_seidel = 0
-
+    
+    print()
+    
     if metodo is None or metodo == 1 or metodo == 7:
         start = time.time()
         tf, L, U = functions.decomposicao_lu(A)
@@ -173,7 +175,8 @@ def exec(metodo=None):
         if tf:
             X_c = functions.solution(L, L.T, B, tf, "Cholesky")
         else:
-            print("Cholesky não pôde ser aplicado por não atender aos critérios.")
+            if metodo == 3:
+                print("Cholesky não pôde ser aplicado por não atender aos critérios.")
             X_c = None
         tempos[2] = time.time() - start
 
@@ -197,6 +200,8 @@ def exec(metodo=None):
         plot_grafico1(hist_jacobi, it_jacobi, hist_seidel, it_seidel)
         plot_grafico2(it_jacobi, it_seidel)
 
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("Obrigado por utilizar")
         exit(1)
     else:
         

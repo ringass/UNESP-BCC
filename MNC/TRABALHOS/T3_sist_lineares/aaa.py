@@ -93,7 +93,7 @@ def plot_tabela(X_lu, X_gc, X_c, X_gj, X_jacobi, X_seidel, tempos, erros):
     table_data = []
     for i, (metodo, solucao, tempo) in enumerate(zip(metodos, solucoes, tempos)):
         formatted_sol = formatar_solucao(solucao)
-        # Erro só para métodos iterativos (Jacobi e Seidel)
+        
         if metodo in ["Jacobi-Richardson", "Gauss-Seidel"]:
             erro_str = f"{erros[i]:.2e}" if erros[i] is not None else "N/A"
         else:
@@ -243,14 +243,14 @@ def exec(metodo=None):
                 table_data.append(["Erro relativo", "N/A"])
 
             print(tabulate(table_data, headers=["Variavel", "Valor"], tablefmt="simple"))
-    time.sleep(5)  
+    time.sleep(4)  
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def main():
     while True:
         e = select()
         if e == 0:
-            print("Saindo...")
+            os.system('cls' if os.name == 'nt' else 'clear')
             break
         else:
             exec(e)

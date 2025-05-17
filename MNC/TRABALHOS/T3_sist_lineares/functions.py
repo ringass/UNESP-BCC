@@ -54,32 +54,31 @@ def ver_simetria(A):
 def cri_linhas(A):
 
     n = len(A)
+
     X = np.zeros(n)
 
     for i in range(n):
+        soma = 0
         for j in range(n):
-            if(i != j):
-                X[i] = abs(A[i, j] / A[i, i]);
+            if i != j:
+                soma += abs(A[i, j] / A[i, i])
+        X[i] = soma
 
-    if(max(X) < 1):
-        return True
-    
-    return False
+    return max(X) < 1
+
 
 def cri_colunas(A):
-
     n = len(A)
     X = np.zeros(n)
 
     for j in range(n):
+        soma = 0
         for i in range(n):
-            if(j != i):
-                X[j] = abs(A[i, j] / A[j, j]);
+            if i != j:
+                soma += abs(A[i, j] / A[j, j])
+        X[j] = soma
 
-    if(max(X) < 1):
-        return True
-    
-    return False
+    return max(X) < 1
 
 def estri_diagonal(A):
 
@@ -90,7 +89,7 @@ def estri_diagonal(A):
 
         for j in range(n):
 
-            if(j != i):
+            if j != i:
                 soma += A[i, j]
 
         if abs(A[i, i]) > abs(soma):
@@ -98,19 +97,50 @@ def estri_diagonal(A):
 
     return False
 
-                
+
+def criterio_sassenfeld(A):
+
+    n = len(A)
+    beta = np.zeros(n, dtype=float)
+
+    for i in range(n):
+        soma1 = sum(abs(A[i, j]) * beta[j] for j in range(i))
+        soma2 = sum(abs(A[i, j]) for j in range(i + 1, n))
+
+        beta[i] = (soma1 + soma2) / abs(A[i, i])
+
+    return np.all(beta < 1)
+
+
 ## SOLUTION ##
 
-def solution(A, B, RES):
 
-    
+def solution(L, U, B, tf, name):
+    if not tf:
+        print(
+            f"O método {name} nao pode ser utilizado pois nao respeitou os criterios de convergencia"
+        )
+        return None
 
-    
+    n = len(B)
 
+    if name in ["Decomposicao LU", "Gauss-Compacto", "Cholesky"]:
 
+        Y = np.zeros(n)
+        for i in range(n):
+            Y[i] = B[i] - sum(L[i, j] * Y[j] for j in range(i))
 
+        X = np.zeros(n)
+        for i in range(n - 1, -1, -1):
+            X[i] = (Y[i] - sum(U[i, j] * X[j] for j in range(i + 1, n))) / U[i, i]
 
-## metodos
+    elif name in ["Jacobi-Richardson", "Gauss-Seidel"]:
+        X = U
+    else:
+        print(f"Metodo {name} nao reconhecido")
+        return None
+
+    return X
 
 
 ## GAUSS-JORDAN ##
@@ -147,10 +177,10 @@ def decomposicao_lu(A):
 
     # convergencia dos amigos
     if not ver_quadrada(A):
-        return False, None
+        return False, None, None
 
     elif not menores_principais(A):
-        return False, None
+        return False, None, None
 
     n = len(A)
 
@@ -160,15 +190,21 @@ def decomposicao_lu(A):
     for k in range(n):
 
         for j in range(k, n):
-
+            
+            soma = 0
             for s in range(k):
-                U[k, j] = A[k, j] - (L[k, s] * U[s, k])
+                soma += L[k, s] * U[s, j]
 
-            for i in range(k + 1, n):
+            U[k, j] = A[k, j] - soma
 
-                for s in range(k):
+        for i in range(k + 1, n):
+            soma = 0
+                
+            for s in range(k):
 
-                    L[i, k] = (1 / U[k, k]) * (A[i, k] - L[i, s] * U[s, k])
+                soma += L[i, s] * U[s, k]
+
+            L[i, k] = (A[i, k] - soma) / U[k, k]
 
     return True, L, U
 
@@ -210,7 +246,6 @@ def cholesky(A):
 
 ## GAUSS-COMPACTO ##
 
-
 def gauss_compacto(A):
 
     if not ver_quadrada(A):
@@ -245,57 +280,66 @@ def gauss_compacto(A):
 
 ## Jacobi-Richardson ##
 
+
 def jacobi_richardson(A, B):
+    
+    if not cri_linhas(A) and not cri_colunas(A):
+        return False, None, None, None    
     n = len(A)
     k_max = 50
     err = 1e-5
     X = np.zeros(n, dtype=float)
-    
-    
+    h = []
+
     def calcula_linha(A, B, X_, i, results):
-        
+
         soma = 0.0
-        
+
         for j in range(n):
-            
+
             if j != i:
-                soma += A[i, j] * X_[j] 
-        
+                soma += A[i, j] * X_[j]
+
         results[i] = (B[i] - soma) / A[i, i]
 
-
-    for k in range(k_max): 
+    for k in range(k_max):
         X_ = X.copy()
-        
+
         threads = []
         results = np.zeros(n, dtype=float)
 
-        
         for i in range(n):
             thread = threading.Thread(target=calcula_linha, args=(A, B, X_, i, results))
             threads.append(thread)
             thread.start()
 
-        
         for thread in threads:
             thread.join()
 
         X = results
+        h.append(X.copy())
 
-       
-        if np.linalg.norm(X - X_, ord=np.inf) < tol:
-            return True, X, k + 1
+        erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(X, ord=np.inf)
 
-    return False, X, k_max
+        if erro_relativo < err:
+            return True, X, k + 1, np.array(h), erro_relativo
+
+    erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(X, ord=np.inf)
+    return False, X, k_max, np.array(h), erro_relativo
 
 
 ## Gauss-Seidel ##
 def gauss_seidel(A, B):
+
+    if not cri_linhas(A) or not criterio_sassenfeld(A):
+        return False, None, None, None
+
     n = len(A)
     k_max = 50
     err = 1e-5
 
     X = np.zeros(n, dtype=float)
+    h = []
 
     for k in range(k_max):
 
@@ -313,8 +357,12 @@ def gauss_seidel(A, B):
 
             X[i] = (B[i] - soma1 - soma2) / A[i, i]
 
-        if np.linalg.norm(X[i] - X_[i], ord=np.inf) < err:
+        h.append(X.copy())
 
-            return True, X, k + 1
+        erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(X, ord=np.inf)
 
-    return False, X, k_max
+        if erro_relativo < err:
+            return True, X, k + 1, np.array(h), erro_relativo
+
+    erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(X, ord=np.inf)
+    return False, X, k_max, np.array(h), erro_relativo

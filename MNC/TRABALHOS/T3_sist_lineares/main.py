@@ -1,7 +1,7 @@
 import os, time
 import math
 import matplotlib.pyplot as mpt
-import functions
+import functions as functions
 import numpy as np
 import matplotlib.gridspec as gridspec
 from tabulate import tabulate
@@ -9,10 +9,6 @@ from tabulate import tabulate
 A = np.array([[10, 2, -1], [-3, -6, 2], [1, 1, 5]], dtype=float)
 
 B = np.array([27, -61.5, -21.5], dtype=float)
-
-
-import matplotlib.pyplot as mpt
-import matplotlib.gridspec as gridspec
 
 
 def plot_grafico1(hist_jacobi, it_jacobi, hist_seidel, it_seidel):
@@ -47,7 +43,7 @@ def plot_grafico1(hist_jacobi, it_jacobi, hist_seidel, it_seidel):
 
     mpt.xlabel("Iterações")
     mpt.ylabel("Valores de X")
-    mpt.title("Convergência dos Métodos Iterativos (Iterações no eixo X)")
+    mpt.title("Convergência dos Métodos Iterativos")
     mpt.legend()
     mpt.grid(True)
     min_y = int(min(hist_jacobi.min(), hist_seidel.min())) - 1
@@ -55,7 +51,7 @@ def plot_grafico1(hist_jacobi, it_jacobi, hist_seidel, it_seidel):
     mpt.yticks(range(min_y, max_y + 1, 1))
     mpt.tight_layout()
     mpt.savefig("grafico_convergencia.png")
-    mpt.close()
+    
 
 
 def plot_grafico2(it_jacobi, it_seidel):
@@ -68,7 +64,7 @@ def plot_grafico2(it_jacobi, it_seidel):
     mpt.title("Número de Iterações por Método")
     mpt.tight_layout()
     mpt.savefig("grafico_iteracoes.png")
-    mpt.close()
+    
 
 
 def plot_tabela(X_lu, X_gc, X_c, X_gj, X_jacobi, X_seidel, tempos, erros):
@@ -99,7 +95,7 @@ def plot_tabela(X_lu, X_gc, X_c, X_gj, X_jacobi, X_seidel, tempos, erros):
         else:
             erro_str = "N/A"
 
-        row = [metodo] + formatted_sol + [f"{tempo:.8f}s"] + [erro_str]
+        row = [metodo] + formatted_sol + [f"{tempo:.2e}s"] + [erro_str]
         table_data.append(row)
 
     fig = mpt.figure(figsize=(12, 4))
@@ -121,7 +117,7 @@ def plot_tabela(X_lu, X_gc, X_c, X_gj, X_jacobi, X_seidel, tempos, erros):
 
     mpt.tight_layout()
     mpt.savefig("tabela_solucoes.png")
-    mpt.close()
+    
 
 
 def select():
@@ -132,7 +128,7 @@ def select():
     print("[4] - Gauss-Jordan")
     print("[5] - Jacobi-Richardson")
     print("[6] - Gauss-Seidel")
-    print("[7] - Tabelar métodos")
+    print("[7] - Comparar métodos")
     print("[0] - Sair")
 
     while True:
@@ -159,8 +155,8 @@ def exec(metodo=None):
     
     if metodo is None or metodo == 1 or metodo == 7:
         start = time.time()
-        tf, L, U = functions.decomposicao_lu(A)
-        X_lu = functions.solution(L, U, B, tf, "LU")
+        tf, L, U = functions.decomposicao_lu(A)     
+        X_lu = functions.solution(L, U, B, tf, "Decomposicao LU")
         tempos[0] = time.time() - start
 
     if metodo == 2 or metodo == 7:
@@ -232,7 +228,7 @@ def exec(metodo=None):
                 table_data.append([f"x{idx+1}", f"{val:.6g}"])
 
         
-            table_data.append(["Tempo de execucao", f"{tempo:.6f}s"])
+            table_data.append(["Tempo de execucao", f"{tempo:.2e}s"])
             
             if erro is not None:
                 

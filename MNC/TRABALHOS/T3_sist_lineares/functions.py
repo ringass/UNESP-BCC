@@ -31,17 +31,17 @@ def menores_principais(A, pos=False):
     n = len(A)
 
     for k in range(1, n + 1):
-
         sub = A[:k, :k]
         det = np.linalg.det(sub)
 
-        if det != 0 and not pos:
-
-            return False
-
-        elif det < 0 and pos:
-
-            return False
+        if pos:
+            
+            if det <= 0:
+                return False
+        else:
+            
+            if det == 0:
+                return False
 
     return True
 
@@ -173,7 +173,7 @@ def decomposicao_lu(A):
     if not ver_quadrada(A):
         return False, None, None
 
-    elif not menores_principais(A):
+    if not menores_principais(A, False):
         return False, None, None
 
     n = len(A)
@@ -200,6 +200,7 @@ def decomposicao_lu(A):
 
             L[i, k] = (A[i, k] - soma) / U[k, k]
 
+    
     return True, L, U
 
 
@@ -278,8 +279,9 @@ def gauss_compacto(A):
 
 def jacobi_richardson(A, B):
 
-    if not cri_linhas(A) and not cri_colunas(A):
+    if not cri_linhas(A) or not cri_colunas(A):
         return False, None, None, None
+    
     n = len(A)
     k_max = 50
     err = 1e-5
@@ -314,9 +316,7 @@ def jacobi_richardson(A, B):
         X = results
         h.append(X.copy())
 
-        erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(
-            X, ord=np.inf
-        )
+        erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(X, ord=np.inf)
 
         if erro_relativo < err:
             return True, X, k + 1, np.array(h), erro_relativo
@@ -356,12 +356,11 @@ def gauss_seidel(A, B):
 
         h.append(X.copy())
 
-        erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(
-            X, ord=np.inf
-        )
+        erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(X, ord=np.inf)
 
         if erro_relativo < err:
             return True, X, k + 1, np.array(h), erro_relativo
 
     erro_relativo = np.linalg.norm(X - X_, ord=np.inf) / np.linalg.norm(X, ord=np.inf)
     return False, X, k_max, np.array(h), erro_relativo
+

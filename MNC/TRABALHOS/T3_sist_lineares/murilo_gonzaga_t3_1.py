@@ -1,7 +1,7 @@
 import os, time
 import math
 import matplotlib.pyplot as mpt
-import functions as functions
+import murilo_gonzaga_t3_2 
 import numpy as np
 import matplotlib.gridspec as gridspec
 from tabulate import tabulate
@@ -119,7 +119,6 @@ def plot_tabela(X_lu, X_gc, X_c, X_gj, X_jacobi, X_seidel, tempos, erros):
     mpt.savefig("tabela_solucoes.png")
     
 
-
 def select():
     print("Deseja resolver o problema com: ")
     print("[1] - Decomposicao LU")
@@ -155,21 +154,21 @@ def exec(metodo=None):
     
     if metodo is None or metodo == 1 or metodo == 7:
         start = time.time()
-        tf, L, U = functions.decomposicao_lu(A)     
-        X_lu = functions.solution(L, U, B, tf, "Decomposicao LU")
+        tf, L, U = murilo_gonzaga_t3_2.decomposicao_lu(A)     
+        X_lu = murilo_gonzaga_t3_2.solution(L, U, B, tf, "Decomposicao LU")
         tempos[0] = time.time() - start
 
     if metodo == 2 or metodo == 7:
         start = time.time()
-        tf, L, U = functions.gauss_compacto(A)
-        X_gc = functions.solution(L, U, B, tf, "Gauss-Compacto")
+        tf, L, U = murilo_gonzaga_t3_2.gauss_compacto(A)
+        X_gc = murilo_gonzaga_t3_2.solution(L, U, B, tf, "Gauss-Compacto")
         tempos[1] = time.time() - start
 
     if metodo == 3 or metodo == 7:
         start = time.time()
-        tf, L = functions.cholesky(A)
+        tf, L = murilo_gonzaga_t3_2.cholesky(A)
         if tf:
-            X_c = functions.solution(L, L.T, B, tf, "Cholesky")
+            X_c = murilo_gonzaga_t3_2.solution(L, L.T, B, tf, "Cholesky")
         else:
             if metodo == 3:
                 print("Cholesky não pôde ser aplicado por não atender aos critérios.")
@@ -177,18 +176,18 @@ def exec(metodo=None):
         tempos[2] = time.time() - start
 
     if metodo == 4 or metodo == 7:
-            tf, X_gj = functions.gauss_jordan(A, B) 
+            tf, X_gj = murilo_gonzaga_t3_2.gauss_jordan(A, B) 
         
     if metodo == 5 or metodo == 7:
         start = time.time()
-        tf, X, it_jacobi, hist_jacobi, erros[4] = functions.jacobi_richardson(A, B)
-        X_jacobi = functions.solution(None, X, B, tf, "Jacobi-Richardson")
+        tf, X, it_jacobi, hist_jacobi, erros[4] = murilo_gonzaga_t3_2.jacobi_richardson(A, B)
+        X_jacobi = murilo_gonzaga_t3_2.solution(None, X, B, tf, "Jacobi-Richardson")
         tempos[4] = time.time() - start
 
     if metodo == 6 or metodo == 7:
         start = time.time()
-        tf, X, it_seidel, hist_seidel, erros[5] = functions.gauss_seidel(A, B)
-        X_seidel = functions.solution(None, X, B, tf, "Gauss-Seidel")
+        tf, X, it_seidel, hist_seidel, erros[5] = murilo_gonzaga_t3_2.gauss_seidel(A, B)
+        X_seidel = murilo_gonzaga_t3_2.solution(None, X, B, tf, "Gauss-Seidel")
         tempos[5] = time.time() - start
 
     if metodo == 7:
@@ -202,7 +201,7 @@ def exec(metodo=None):
     else:
         
         metodos = [
-            "LU",
+            "Decomposicao LU",
             "Gauss-Compacto",
             "Cholesky",
             "Gauss-Jordan",
@@ -241,6 +240,7 @@ def exec(metodo=None):
             print(tabulate(table_data, headers=["Variavel", "Valor"], tablefmt="simple"))
     time.sleep(4)  
     os.system('cls' if os.name == 'nt' else 'clear')
+
 
 def main():
     while True:

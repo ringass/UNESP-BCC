@@ -240,8 +240,6 @@ def cholesky(A):
 
 
 ## GAUSS-COMPACTO ##
-
-
 def gauss_compacto(A):
 
     if not ver_quadrada(A):

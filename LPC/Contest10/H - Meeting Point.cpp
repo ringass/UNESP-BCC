@@ -1,90 +1,78 @@
 #include <bits/stdc++.h>
-#define ll long long
-
 using namespace std;
+using ll = long long;
+using Edge = pair<ll, int>;
+using Graph = vector<vector<Edge>>;
 
-const ll INF = 1e18;
-
-
-void fast()
+const ll oo = 1e10;
+vector<ll> dists(int s, const Graph &adj, int p)
 {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    cout.tie(nullptr);
-}
-
-void dijkstra(ll start, vector<vector<pair<ll, ll>>> &adj, vector<ll> &dist)
-{
-
-    dist[start] = 0;
-    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<>> pq;
-
-    pq.push({0, start});
-
+    int n = size(adj);
+    vector<ll> ret(n, oo);
+    priority_queue<Edge, vector<Edge>, greater<Edge>> pq;
+    ret[s] = 0;
+    pq.emplace(0, s);
     while (!pq.empty())
     {
-        auto [d, u] = pq.top();
+        auto [du, u] = pq.top();
         pq.pop();
-
-        if (d > dist[u])
+        if (du > ret[u])
             continue;
-
-        for (auto [v, w] : adj[u])
+        for (auto &[w, v] : adj[u])
         {
-            if (dist[u] + w < dist[v])
+            if (v == p)
+                continue;
+            if (ret[v] > w + du)
             {
-                dist[v] = dist[u] + w;
-                pq.push({dist[v], v});
+                ret[v] = w + du;
+                pq.emplace(w + du, v);
             }
         }
     }
+    return ret;
 }
 
-int main()
+int32_t main()
 {
-
-    fast();
-
-    ll n, m, P, G;
-    cin >> n >> m >> P >> G;
-
-    vector<vector<pair<ll, ll>>> adj(n + 1);
-    vector<ll> distP(n + 1, INF), distG(n + 1, INF);
-    vector<ll> ans;
-
-    for (ll i = 0; i < m; ++i)
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    int n, m;
+    cin >> n >> m;
+    int p, g;
+    cin >> p >> g;
+    p--, g--;
+    Graph adj(n);
+    while (m--)
     {
-        ll u, v, w;
-        cin >> u >> v >> w;
-        adj[u].push_back({v, w});
-        adj[v].push_back({u, w});
+        int u, v;
+        cin >> u >> v;
+        ll w;
+        cin >> w;
+        u--, v--;
+        adj[u].emplace_back(w, v);
+        adj[v].emplace_back(w, u);
     }
 
-    dijkstra(P, adj, distP);
-    dijkstra(G, adj, distG);
+    auto dp = dists(p, adj, -1);
+    auto dg = dists(g, adj, -1);
+    auto dpg = dists(p, adj, g);
 
-    for (ll i = 1; i <= n; i++)
+    vector<int> ans;
+    for (int i = 0; i < n; i++)
     {
-
-        if (i == P)
-        {
-            continue;
-        }
-
-        if ((2 * distG[i] == distP[i]) && (distP[G] + distG[i] == distP[i]))
+        if (dp[i] == dp[g] + dg[i] && dpg[i] > dp[i] && dp[g] == dg[i])
         {
             ans.push_back(i);
         }
     }
-
-    if(ans.empty()){
+    if (!size(ans))
+    {
         cout << "*\n";
-    }else{
-        for(ll i : ans){
-            cout << i << " ";
-        }
-        cout << "\n";
     }
-
-    return 0;
+    else
+    {
+        for (auto i : ans)
+            cout << i + 1 << ' ';
+        cout << '\n';
+    }
 }

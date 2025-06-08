@@ -52,7 +52,7 @@ public class Servidor {
                 int l = jogada[0];
                 int c = jogada[1];
 
-                synchronized (tabuleiro) {
+                synchronized (tabuleiro)  {
                     if (tabuleiro[l][c].equals("-") &&
                             ((simbolo.equals("X") && P1Time) || (simbolo.equals("O") && !P1Time))) {
 

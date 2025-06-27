@@ -13,51 +13,50 @@ interface FormaGeometrica {
 
 public class Formas {
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        
+
         int i = 0;
         FormaGeometrica[] formas = new FormaGeometrica[5];
 
-        while(i < 5){
-        System.out.println("Deseja inserir um Circulo (1) ou Retangulo(2)?");
-        int p = sc.nextInt();
+        while (i < 5) {
+            System.out.println("Deseja inserir um Circulo (1) ou Retangulo(2)?");
+            int p = sc.nextInt();
 
-        if(p == 1){
-            System.out.println("Raio do Circulo: ");
-            double r = sc.nextDouble();
+            if (p == 1) {
+                System.out.println("Raio do Circulo: ");
+                double r = sc.nextDouble();
 
-           Circulo a = new Circulo(r);
+                Circulo a = new Circulo(r);
 
-           formas[i] = a;
+                formas[i] = a;
 
-        }else{
-            System.out.println("Altura e Largura: ");
-            double x = sc.nextDouble();
-            double y = sc.nextDouble();
+            } else {
+                System.out.println("Altura e Largura: ");
+                double x = sc.nextDouble();
+                double y = sc.nextDouble();
 
-            Retangulo a = new Retangulo(x, y);
+                Retangulo a = new Retangulo(x, y);
 
-            formas[i] = a;
+                formas[i] = a;
+            }
+
+            i++;
         }
 
+        for (int j = 0; j < 5; j++) {
+            if (formas != null) {
 
-        i++;
-    }
+                formas[j].getName();
+                System.out.format("Area: %.4f\n", formas[j].calcularArea());
+                System.out.format("Perimetro: %.4f\n", formas[j].calcularPerimetro());
+                System.out.println();
+            }
 
-    for(int j = 0; j < 5; j++){
-        if (formas != null) {
-            
-            formas[j].getName();
-            System.out.format("Area: %.4f\n", formas[j].calcularArea());
-            System.out.format("Perimetro: %.4f\n", formas[j].calcularPerimetro());
-            System.out.println();
         }
+        sc.close();
 
     }
-    sc.close();
-
-}
 }
 
 class Circulo implements FormaGeometrica {
@@ -69,7 +68,7 @@ class Circulo implements FormaGeometrica {
     }
 
     @Override
-    public void getName(){
+    public void getName() {
         System.err.println("Forma: Circulo");
     }
 
@@ -98,7 +97,7 @@ class Retangulo implements FormaGeometrica {
     }
 
     @Override
-    public void getName(){
+    public void getName() {
         System.err.println("Forma: Retangulo");
     }
 

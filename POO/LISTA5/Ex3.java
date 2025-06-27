@@ -78,6 +78,6 @@ public class Ex3 extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new Ex3(); // Corrigido aqui também
+        new Ex3(); 
     }
 }

@@ -8,7 +8,7 @@ int main() {
     int n;
     int k;
     cin >> n >> k;
-
+    
     unordered_set<int> vet;
 
     int count = 0;

@@ -1,4 +1,8 @@
 {
+    "clangd.arguments": [
+        "--compile-commands-dir=."
+    ],
+    "C_Cpp.intelliSenseEngine": "disabled",
     "files.associations": {
         "iostream": "cpp",
         "ostream": "cpp",

@@ -19,7 +19,7 @@ AnalisadorLexico::AnalisadorLexico(const std::string& nomeIn, const std::string&
 
     PROXIMO();
 }
-
+//funcao proximo
 void AnalisadorLexico::PROXIMO() {
     int c = arquivoIn.get();
 
@@ -34,18 +34,17 @@ void AnalisadorLexico::PROXIMO() {
 
     proximo = static_cast<char>(c);
 }
-
+//funcao codigo
 int AnalisadorLexico::CODIGO(const std::string& lexema) {
-    int cod = tabela.buscarEspecial(lexema);
+    int cod = tabela.buscarEspecial(lexema); //busca no map especiais
     if (cod != -1) return cod;
 
-    cod = tabela.buscarReservada(lexema);
+    cod = tabela.buscarReservada(lexema); //busca no map reservadas
     if (cod != -1) return cod;
 
     return -1;
 }
-
-
+//funcao erro
 void AnalisadorLexico::ERRO(const std::string& msg) {
     std::cerr << "\n[ERRO] Linha " << linha
               << ": " << msg
@@ -53,12 +52,13 @@ void AnalisadorLexico::ERRO(const std::string& msg) {
     exit(1);
 }
 
+//algoritmo da aula 5
 void AnalisadorLexico::ANALISADOR_LEXICO() {
     atomo.clear();
 
     
     while (proximo != '\0' && std::isspace(static_cast<unsigned char>(proximo))) {
-        arquivoOut << proximo;
+        arquivoOut << proximo; //imprime os espaços (qualquer tipo já quee usamos isspace) para reproduzir identacao no out.txt
         PROXIMO();
     }
 

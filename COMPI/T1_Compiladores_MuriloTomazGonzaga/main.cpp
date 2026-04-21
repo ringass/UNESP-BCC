@@ -4,11 +4,11 @@
     Disciplina:   Compiladores
     Trabalho:     T1 - Analisador Lexico
     OS:           Linux (EndeavourOS)
-    Compilador:   clang (clang++) version 22.1.3
+    Compilador:   Clang (clang++) version 22.1.3
     IDE:          Neovim
     
     COMPILAR: clang++ -std=c++17 main.cpp AnalisadorLexico.cpp -o analisador
-    EXECUTAR: ./analisador Trab1_Compiladores.txt
+    EXECUTAR: ./analisador Trab1_Compiladores.txt[in.txt] saida_codificado.txt[out.txt]
     ANALISAR CÓDIGO CODIFICADO: cat saida_codificado.txt
  */
 
@@ -17,7 +17,7 @@
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cerr << "Uso correto: " << argv[0] << " <in.txt>" << argv[2] << " out.txt\n";
+        std::cerr << "Uso correto: " << argv[0] << " <in.txt> <out.txt>\n";
         return 1;
     }
 

@@ -12,6 +12,7 @@ public:
     Token(int codigo, const std::string& lexema, int linha)
         : codigo(codigo), lexema(lexema), linha(linha) {}
 
+    //identificacao do tipo de token pelo codigo (poderia ter usado um map mas assim fica mais facil)
     inline std::string tipoToken() const {
         switch (codigo) {
             case CODE_IDENTIFICADOR: return "IDENTIFICADOR";

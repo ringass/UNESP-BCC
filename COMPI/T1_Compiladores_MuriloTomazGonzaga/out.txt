@@ -1,0 +1,22 @@
+res_10 id_100(exemplo1) op_42
+	res_11 
+		id_101(n) op_41 id_102(s) op_41 id_103(i) op_43 res_12 op_42
+	res_15 id_104(soma) op_42
+		res_11 id_105(q) op_43 res_12 op_42
+	res_16
+		id_105(q) op_44 id_103(i) op_52 id_103(i) op_42
+		res_18 op_45 id_103(i) res_25 num_2 op_46 op_52 num_2 op_53 id_103(i) res_19
+			id_102(s) op_44 id_102(s) op_50 id_105(q) op_42
+		res_20
+			id_102(s) op_44 id_102(s) op_51 id_105(q) op_42
+	res_17 op_42
+res_16
+	res_23 op_45 id_101(n) op_46 op_42
+	id_102(s) op_44 num_0 op_42 id_103(i) op_44 num_0 op_42
+	res_21 id_103(i) op_57 id_101(n) res_22
+	res_16	
+		id_104(soma) op_42
+		res_24 op_45 id_102(s) op_46 op_42
+		id_103(i) op_44 id_103(i) op_50 num_1 op_42
+	res_17
+res_17 op_40

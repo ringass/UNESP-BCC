@@ -4,7 +4,7 @@
 #include <cctype>
 
 enum CodigoToken {
-    CODE_IDENTIFICADOR = 1,
+    // CODE_IDENTIFICADOR = 1,
     CODE_NUMERO        = 2,
 
     /* palavras reservadas */
@@ -111,7 +111,20 @@ public:
         return (it != especiais.end()) ? it->second : -1;
     }
 
+    //para id progressivo dos identificadores
+    int buscaOuinsercaoId(const std::string& lexema) {
+        auto it = identificadores.find(lexema);
+        if (it != identificadores.end())
+            return it->second;
+        int cod = proximoId++;
+        identificadores[lexema] = cod;
+        return cod;
+    }
+ 
 private:
     std::unordered_map<std::string, int> reservadas;
     std::unordered_map<std::string, int> especiais;
+    std::unordered_map<std::string, int> identificadores;
+
+    int proximoId  = 100;
 };

@@ -29,7 +29,9 @@ void AnalisadorLexico::PROXIMO() {
     }
 
     if (c == '\n') {
-        linha++;
+        proximo = '\n';
+        // linha++;
+        return;
     }
 
     proximo = static_cast<char>(c);
@@ -46,18 +48,18 @@ int AnalisadorLexico::CODIGO(const std::string& lexema) {
 }
 //funcao erro
 void AnalisadorLexico::ERRO(const std::string& msg) {
-    std::cerr << "\n[ERRO] Linha " << linha
-              << ": " << msg
-              << " (caractere: '" << proximo << "')\n";
+    std::cerr << "\n[ERRO] Linha " << linha << ": " << msg << " (caractere: '" << proximo << "')\n";
     exit(1);
 }
 
-//algoritmo da aula 5
+//algoritmo da aula 5 com ressalvas para implementacao do arquivo codificado
 void AnalisadorLexico::ANALISADOR_LEXICO() {
     atomo.clear();
 
     
     while (proximo != '\0' && std::isspace(static_cast<unsigned char>(proximo))) {
+        if (proximo == '\n')
+            linha++;
         arquivoOut << proximo; //imprime os espaços (qualquer tipo já quee usamos isspace) para reproduzir identacao no out.txt
         PROXIMO();
     }
@@ -71,9 +73,9 @@ void AnalisadorLexico::ANALISADOR_LEXICO() {
     
     if (std::string(".,;:()+-*=<>").find(proximo) != std::string::npos) {
         std::string s(1, proximo);
+        
         PROXIMO();
 
-        
         if ((s == ":" && proximo == '=') ||
             (s == "<" && proximo == '=') ||
             (s == ">" && proximo == '=') ||
@@ -83,7 +85,7 @@ void AnalisadorLexico::ANALISADOR_LEXICO() {
         }
 
         simbolo = CODIGO(s);
-        atomo   = s;
+        atomo = s;
         return;
     }
 
@@ -95,10 +97,10 @@ void AnalisadorLexico::ANALISADOR_LEXICO() {
         } while (std::isalnum(static_cast<unsigned char>(proximo)) || proximo == '_');
 
         int cod = CODIGO(atomo);
-        simbolo = (cod != -1) ? cod : CODE_IDENTIFICADOR;
+        simbolo = (cod != -1) ? cod : tabela.buscaOuinsercaoId(atomo);
         return;
-    }
 
+    }
     
     if (std::isdigit(static_cast<unsigned char>(proximo))) {
         do {
@@ -139,8 +141,8 @@ void AnalisadorLexico::imprimirCabecalho() const {
               << std::setw(15)  << "LINHA"
               << std::setw(22) << "ATOMO"
               << std::setw(10)  << "CODIGO"
-              << "TIPO\n"
-              << std::string(50, '-') << "\n";
+              << "\n"
+              << std::string(62, '-') << "\n";
 }
 
 void AnalisadorLexico::imprimirTabela(const Token& t) const {
@@ -148,13 +150,13 @@ void AnalisadorLexico::imprimirTabela(const Token& t) const {
               << std::setw(15)  << t.linha
               << std::setw(22) << t.lexema
               << std::setw(10)  << t.codigo
-              << t.tipoToken() << "\n";
+              << "\n";
 }
 
 //impressão no arquivo out
 void AnalisadorLexico::imprimirArquivo(const Token& t) {
 
-    if (t.codigo == CODE_IDENTIFICADOR) {
+    if (t.codigo >= 100) {
         arquivoOut << "id_" << t.codigo << "(" << t.lexema << ")";
     } 
     else if (t.codigo >= 10 && t.codigo <= 30) {

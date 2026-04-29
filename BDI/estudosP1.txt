@@ -1,0 +1,206 @@
+CREATE TABLE clientes(
+id SERIAL PRIMARY KEY,
+nome VARCHAR(32) NOT NULL,
+email VARCHAR(50) NOT NULL,
+idade SMALLINT
+);
+
+CREATE TABLE produtos (
+id SERIAL PRIMARY KEY,
+nome VARCHAR(30) NOT NULL,
+preco NUMERIC(10.2) NOT NULL
+);
+
+CREATE TABLE pedidos (
+id SERIAL PRIMARY KEY,
+cliente_id INTEGER REFERENCES clientes(id),
+produto_id INTEGER KEY REFERENCES produtos(id),
+quantidade INTEGER,
+data_pedido DATE
+);
+
+INSERT INTO clientes(nome, email, idade)D
+VALUES ('Murilo', 'murilogonzaga115@gmail.com', 21),D
+('Caio Cesar', 'caio@unesp.br', 21),
+('amigao', 'amigao@gmail.com', 19),
+('Donzela', 'Donzela@unesp.br', 20),
+('Amigona', 'Amigona@unesp.br', 24);
+
+INSERT INTO produtos(nome, preco)
+VALUES ('batata', 19.50), ('macarrao', 7.99), ('doce de abobora', 4.25), ('roller', 8.00), ('coca-cola', 15.00);
+
+INSERT INTO pedidos(cliente_id, produto_id, quantidade) VALUES
+(1, 2, 7),
+(2, 1, 4),
+(2, 2, 5),
+(4, 4, 1),
+(5, 3, 2);
+
+--- SELECTS / QUERYS
+
+1 - SELECT * FROM clientes;
+
+2 - SELECT * FROM produtos WHERE preco > 50.00;
+
+3 - SELECT c.nome AS cliente, p.nome AS produto, pe.quantidade
+FROM pedidos pe
+JOIN clientes c ON pe.cliente_id = c.id
+JOIN pedidos p ON pe.produto_id = p.id;
+
+4 - SELECT nome, preco FROM produtos WHERE (SELECT AVG(preco) FROM produtos);
+
+5 - SELECT nome, preco FROM produtos WHERE (SELECT MAX(preco) FROM produtos);
+
+6 - SELECT nome, preco
+FROM produtos WHERE (SELECT MIN(preco) FROM produtos);
+
+7 - SELECT c.nome AS cliente, COUNT(p.quantidade) AS total_pedidos FROM clientes c 
+LEFT JOIN pedidos pe ON c.id = pe.cliente_id
+GROUP BY c.nome
+ORDER BY total_pedidos DESC;
+
+8 - SELECT c.nome AS client, SUM(p.preco * pe.quantidade) AS total_gasto
+FROM clientes c
+JOIN pedidos pe ON pe.cliente_id = c.id
+JOIN produtos p ON pe.produto_id = p.id
+GROUP BY c.nome
+ORDER BY total_gasto DESC;
+
+9 - SELECT c.nome AS cliente, COUNT(pe.id) AS total_pedidos
+FROM clientes c
+JOIN pedidos pe ON pe.cliente_id = c.id
+GROUP BY c.nome
+ORDER BY total DESC
+LIMIT 1;
+
+10 - SELECT c.nome AS client, SUM(p.preco * pe.quantidade) AS total_gasto
+FROM clientes c
+JOIN pedidos pe ON pe.cliente_id = c.id
+JOIN produtos p ON pe.produto_id = p.id
+GROUP BY c.nome
+ORDER BY total_gasto DESC
+LIMIT 1;
+
+11 - SELECT p.nome AS produto, COUNT(pe.id) AS produtos
+FROM produtos p
+LEFT JOIN pedidos pe ON pe.produtos_id = p.id
+GROUP BY p.nome
+ORDER BY produtos DESC
+LIMIT 1;
+
+SELECT d.nome AS nome, c.cidade AS cidade
+FROM depositor d
+JOIN cliente c ON c.nome = d.nome
+
+
+------------------------------------------
+------------------------------------------
+------------------------------------------
+------------------------------------------
+------------------------------------------
+
+INSERT INTO professor (nome, area) VALUES
+('Ana Paula', 'Banco de Dados'),
+('Carlos Silva', 'Inteligência Artificial'),
+('Marina Souza', 'Programação');
+
+INSERT INTO aluno (nome, idade, cidade) VALUES
+('João Henrique', 20, 'Bauru'),
+('Mariana Lima', 22, 'Jaú'),
+('Pedro Santos', 19, 'Bauru'),
+('Fernanda Alves', 21, 'Botucatu'),
+('Lucas Rocha', 23, 'Bauru');
+
+INSERT INTO disciplina (nome, carga_horaria, id_professor) VALUES
+('Banco de Dados I', 60, 1),
+('Introdução à IA', 60, 2),
+('Algoritmos', 80, 3),
+('Modelagem de Dados', 40, 1);
+
+INSERT INTO matricula (id_aluno, id_disciplina, semestre, nota) VALUES
+(1, 1, '2025-1', 8.5),
+(1, 2, '2025-1', 7.0),
+(2, 1, '2025-1', 9.0),
+(2, 4, '2025-1', 8.0),
+(3, 3, '2025-1', 6.5),
+(3, 1, '2025-1', 7.5),
+(4, 2, '2025-1', 9.5),
+(4, 3, '2025-1', 8.0),
+(5, 1, '2025-1', 5.5),
+(5, 4, '2025-1', 7.0);
+
+1 - SELECT nome, idade FROM aluno;
+
+2 - SELECT * FROM aluno WHERE idade > 20;
+
+3 - SELECT nome FROM disciplina WHERE carga_horaria >= 60;
+
+4 - SELECT d.nome AS nome_disciplina, p.nome AS nome_professor
+FROM disciplina d
+JOIN professor p ON p.id = d.id_professor;
+
+5 - SELECT a.nome AS nome_aluno, d.nome AS disciplina
+FROM matricula
+JOIN aluno a ON m.id_aluno = a.id
+JOIN disciplina d ON m.id_disciplica = d.id;
+
+6 - SELECT a.nome FROM matricula m
+JOIN aluno a ON m.id_aluno = a.id
+JOIN disciplina d ON d_id = m.id_disciplina
+WHERE d.nome = 'Banco de Dados I';
+
+!-- SELECT d.nome AS disciplina, COUNT(m.id_disciplina) as qtd_alunos
+FROM disciplina d
+JOIN matricula m ON m.id_disciplina = d.id
+GROUP BY d.nome
+ORDER BY qtd_alunos DESC --!
+
+7 - SELECT COUNT(*) AS total_alunos
+FROM aluno;
+
+8 - SELECT d.nome AS disciplina, AVG(m.nota) AS media_nota
+FROM disciplina d
+JOIN matricula m ON m.id_disciplina = d.id
+GROUP BY d.nome
+ORDER BY media_nota DESC;
+
+9 - SELECT d.nome AS disciplina, AVG(m.nota) AS media_nota
+FROM disciplina d
+JOIN matricula m ON m.id_disciplina = d.id
+GROUP BY d.nome
+HAVING (AVG(m.nota) >= 7.5);
+
+10 - SELECT p.nome AS professor_nome, COUNT(d.id) AS qtd_disciplinas
+FROM professor p
+LEFT JOIN disciplina m ON d.id_professor = p.id
+GROUP BY p.nome
+ORDER BY qtd_disciplinas DESC
+
+11 - SELECT a.nome AS nome_aluno
+FROM aluno a
+JOIN matricula m ON a.id = m.id_aluno
+WHERE a.cidade = 'Bauru';
+
+12 - SELECT a.nome AS nome_aluno, d.nome AS disciplina, m.nota AS nota
+FROM matricula m
+JOIN aluno a ON a.id = m.id_aluno
+JOIN disciplina d ON d.id = m.id_disciplina
+GROUP BY a.nome
+ORDER BY m.nota DESC;
+
+13 - UPDATE matricula SET nota= 6.5 
+WHERE id_aluno = (SELECT id FROM ALUNO where NOME = 'Lucas Rocha')
+AND id_disciplina = (SELECT id FROM disciplina where ome = 'Banco de Dados I');
+
+14 - INSERT INTO disciplina(nome, carga_horaria, id_professor)
+VALUES ('Estrutura de Dados', 80, (SELECT id FROM professor WHERE nome = 'Marina Souza));
+
+15 - DELETE FROM matricula WHERE id_aluno = (SELECT id FROM aluno WHERE nome = 'Pedro Santos') 
+AND id_disciplina = (SELECT id FROM disciplina WHERE nome = 'Algoritmos');
+
+16 - SELECT a.*, COUNT(m.id_aluno) AS qtd_materias
+FROM aluno a
+JOIN matricula m ON m.id_aluno = a.id
+GROUP BY a.*
+HAVING COUNT(a.id_aluno) > 1
+ORDER BY COUNT(a.id_aluno) DESC;

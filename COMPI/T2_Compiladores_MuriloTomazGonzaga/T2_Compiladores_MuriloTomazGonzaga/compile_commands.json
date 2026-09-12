@@ -1,0 +1,7 @@
+[
+  {
+    "directory": ".",
+    "command": "clang++ -std=c++17 -Iinclude src/main.cpp src/AnalisadorLexico.cpp src/AnalisadorSintatico.cpp -o bin/analisador",
+    "file": "src/main.cpp"
+  }
+]
